@@ -1,3 +1,8 @@
+/* Example of a media query for small screens */
+@media (max-width: 768px) {
+  /* Adjust styles for small screens here */
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;

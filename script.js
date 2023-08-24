@@ -194,3 +194,7 @@ document.getElementById("contact-form").addEventListener("submit", function(even
     setInterval(shuffleImages, 15000);
   });
   
+  $(document).ready(function(){
+    $('#myCarousel').carousel();
+  });
+  
