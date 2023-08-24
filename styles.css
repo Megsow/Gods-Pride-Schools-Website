@@ -402,11 +402,14 @@ footer {
 
 /* ... (home page media CSS content) ... */
 
-/* ... (previous CSS content) ... */
-
-.media {
+.media1 {
   text-align: center;
   padding: 50px 0;
+}
+
+.media1 h2 {
+  margin-bottom: 20px;
+  color: #333; /* Dark text color */
 }
 
 .media-gallery {
