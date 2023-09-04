@@ -25,18 +25,168 @@
         <li><a href="news.html">News</a></li>
         <li><a href="contact.html">Contact</a></li>
         <li><a href="http://godsprideschools.com/welcome/login">Portal</a></li>
-
     </ul>
   </nav>
   <div class="container">
     <section class="admissions">
       <h2>Admissions</h2>
-      <p>We're excited to welcome new students to our school. Please follow the instructions below to apply.</p>
-      <ul>
-        <li>Check our available courses.</li>
-        <li>Complete the online application form.</li>
-        <li>Submit any required documents.</li>
-      </ul>
+      <p>We're excited to welcome new students to our school. Please Apply with the form below.</p>
+
+      <h1>School Admission Form</h1>
+      <form action="https://formsubmit.co/8da530955ad70219843754c8964446b6" method="POST">
+        <!--Honeypot-->
+        <input type="text" name="_honey" style="display:none;">
+
+        <!--Disable Captcha-->
+        <input type="hidden" name="_captcha" value="false">
+
+        <!--Success method-->
+        <input type="hidden" name="_next" value="https://godspridegroupofschools.com/success.html">
+        <!-- Pupil's Information -->
+          <h2>Pupil's Information</h2>
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" required>
+          
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" required>
+          
+          <label for="dob">Pupil's Date of Birth (MM-DD-YYYY):</label>
+          <input type="date" id="dob" name="dob" required>
+          
+          <label for="placeOfBirth">Place of Birth:</label>
+          <input type="text" id="placeOfBirth" name="placeOfBirth" required>
+
+          <label for="stateOfOrigin">State Of Origin:</label>
+          <input type="text" id="stateOfOrigin" name="stateOfOrigin" required>
+
+          <label for="nationality">Nationality:</label>
+          <input type="text" id="nationality" name="nationality" required>
+
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+              <option value="">Please Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+          </select>
+
+          <!-- Residential Address -->
+          <h2>Residential Address</h2>
+          <label for="streetAddress">Street Address:</label>
+          <input type="text" id="streetAddress" name="streetAddress" required>
+
+          <label for="streetAddress2">Street Address Line 2:</label>
+          <input type="text" id="streetAddress2" name="streetAddress2">
+
+          <label for="city">City:</label>
+          <input type="text" id="city" name="city" required>
+
+          <label for="state">State / Province:</label>
+          <input type="text" id="state" name="state" required>
+
+          <label for="postalCode">Postal / Zip Code:</label>
+          <input type="text" id="postalCode" name="postalCode" required>
+
+          <!-- Correspondent Address -->
+          <h2>Correspondent Address (fill up only if different from Residential Address)</h2>
+          <label for="correspondentStreetAddress">Street Address:</label>
+          <input type="text" id="correspondentStreetAddress" name="correspondentStreetAddress">
+
+          <label for="correspondentStreetAddress2">Street Address Line 2:</label>
+          <input type="text" id="correspondentStreetAddress2" name="correspondentStreetAddress2">
+
+          <label for="correspondentCity">City:</label>
+          <input type="text" id="correspondentCity" name="correspondentCity">
+
+          <label for="correspondentState">State / Province:</label>
+          <input type="text" id="correspondentState" name="correspondentState">
+
+          <label for="correspondentPostalCode">Postal / Zip Code:</label>
+          <input type="text" id="correspondentPostalCode" name="correspondentPostalCode">
+
+          <!-- Previous School Information -->
+          <h2>Previous School Information</h2>
+          <label for="lastSchoolName">Name of Last School:</label>
+          <input type="text" id="lastSchoolName" name="lastSchoolName" required>
+
+          <label for="lastSchoolStandard">Standard in which pupil was studying:</label>
+          <select id="lastSchoolStandard" name="lastSchoolStandard" required>
+              <option value="">Please Select</option>
+              <option value="kG1">KG1</option>
+              <option value="KG2">KG2</option>
+              <option value="Nursery-1">Nursery 1</option>
+              <option value="Nursery-2">Nursery 2</option>
+              <option value="GRADE-1">GRADE 1</option>
+              <option value="GRADE-2">GRADE 2</option>
+              <option value="GRADE-3">GRADE 3</option>
+              <option value="GRADE-4">GRADE 4</option>
+              <option value="GRADE-5">GRADE 5</option>
+              <option value="GRADE-6">GRADE 6</option>
+              <option value="GRADE-7">GRADE 7</option>
+              <option value="GRADE-8">GRADE 8</option>
+              <option value="GRADE-9">GRADE 9</option>
+              <option value="GRADE-10">GRADE 10</option>
+              <option value="GRADE-11">GRADE 11</option>
+              <option value="GRADE-12">GRADE 12</option>
+          </select>
+
+          <label for="admissionStandard">Standard in which admission is sought:</label>
+          <select id="admissionStandard" name="admissionStandard" required>
+              <option value="">Please Select</option>
+              <option value="kG1">KG1</option>
+              <option value="KG2">KG2</option>
+              <option value="Nursery-1">Nursery 1</option>
+              <option value="Nursery-2">Nursery 2</option>
+              <option value="GRADE-1">GRADE 1</option>
+              <option value="GRADE-2">GRADE 2</option>
+              <option value="GRADE-3">GRADE 3</option>
+              <option value="GRADE-4">GRADE 4</option>
+              <option value="GRADE-5">GRADE 5</option>
+              <option value="GRADE-6">GRADE 6</option>
+              <option value="GRADE-7">GRADE 7</option>
+              <option value="GRADE-8">GRADE 8</option>
+              <option value="GRADE-9">GRADE 9</option>
+              <option value="GRADE-10">GRADE 10</option>
+              <option value="GRADE-11">GRADE 11</option>
+              <option value="GRADE-12">GRADE 12</option>
+          </select>
+
+          <label for="lastSchoolResult">Last School Result:</label>
+          <input type="text" id="lastSchoolResult" name="lastSchoolResult" required>
+
+          <label for="reasonForLeaving">Reason for Leaving Last School:</label>
+          <textarea id="reasonForLeaving" name="reasonForLeaving" rows="4" required></textarea>
+
+          <!-- Guardian Information -->
+          <h2>Guardian Information</h2>
+          <label for="admissionSoughtAs">Admission Sought As:</label>
+          <input type="text" id="admissionSoughtAs" name="admissionSoughtAs" required>
+
+          <label for="localGuardianFirstName">Local Guardian First Name:</label>
+          <input type="text" id="localGuardianFirstName" name="localGuardianFirstName" required>
+
+          <label for="localGuardianLastName">Local Guardian Last Name:</label>
+          <input type="text" id="localGuardianLastName" name="localGuardianLastName" required>
+
+          <label for="localGuardianOccupation">Local Guardian Occupation:</label>
+          <input type="text" id="localGuardianOccupation" name="localGuardianOccupation" required>
+
+          <label for="localGuardianEmail">Local Guardian Email:</label>
+          <input type="email" id="localGuardianEmail" name="localGuardianEmail" required>
+
+          <label for="localGuardianPhone">Local Guardian Phone Number:</label>
+          <input type="tel" id="localGuardianPhone" name="localGuardianPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+          <small>Format: 123-456-7890</small>
+
+          <!-- Attachments -->
+          <h2>Attachments</h2>
+
+          <label for="markList">Attach Scan copy of Last Report Card:</label>
+          <input type="file" id="markList" name="markList" accept=".pdf, .jpg, .jpeg, .png" required>
+
+          <!-- Submit Button -->
+          <button type="submit">Submit</button>
+      </form>
     </section>
     <!-- Other content for the Admissions page -->
   </div>
