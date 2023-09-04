@@ -33,7 +33,7 @@
       <p>We're excited to welcome new students to our school. Please Apply with the form below.</p>
 
       <h1>School Admission Form</h1>
-      <form action="https://formsubmit.co/8da530955ad70219843754c8964446b6" method="POST">
+      <form action="https://formsubmit.co/8da530955ad70219843754c8964446b6" method="POST" enctype="multipart/form-data">
         <!--Honeypot-->
         <input type="text" name="_honey" style="display:none;">
 
@@ -44,20 +44,20 @@
         <input type="hidden" name="_next" value="https://godspridegroupofschools.com/success.html">
         <!-- Pupil's Information -->
           <h2>Pupil's Information</h2>
-          <label for="firstName">First Name:</label>
-          <input type="text" id="firstName" name="firstName" required>
+          <label for="first-Name">First Name:</label>
+          <input type="text" id="first-Name" name="first-Name" required>
           
-          <label for="lastName">Last Name:</label>
-          <input type="text" id="lastName" name="lastName" required>
+          <label for="last-Name">Last Name:</label>
+          <input type="text" id="last-Name" name="last-Name" required>
           
           <label for="dob">Pupil's Date of Birth (MM-DD-YYYY):</label>
           <input type="date" id="dob" name="dob" required>
           
-          <label for="placeOfBirth">Place of Birth:</label>
-          <input type="text" id="placeOfBirth" name="placeOfBirth" required>
+          <label for="place-Of-Birth">Place of Birth:</label>
+          <input type="text" id="place-Of-Birth" name="place-Of-Birth" required>
 
-          <label for="stateOfOrigin">State Of Origin:</label>
-          <input type="text" id="stateOfOrigin" name="stateOfOrigin" required>
+          <label for="state-Of-Origin">State Of Origin:</label>
+          <input type="text" id="state-Of-Origin" name="state-Of-Origin" required>
 
           <label for="nationality">Nationality:</label>
           <input type="text" id="nationality" name="nationality" required>
@@ -89,28 +89,28 @@
 
           <!-- Correspondent Address -->
           <h2>Correspondent Address (fill up only if different from Residential Address)</h2>
-          <label for="correspondentStreetAddress">Street Address:</label>
-          <input type="text" id="correspondentStreetAddress" name="correspondentStreetAddress">
+          <label for="correspondent-Street-Address">Street Address:</label>
+          <input type="text" id="correspondent-Street-Address" name="correspondent-Street-Address">
 
-          <label for="correspondentStreetAddress2">Street Address Line 2:</label>
-          <input type="text" id="correspondentStreetAddress2" name="correspondentStreetAddress2">
+          <label for="correspondent-Street-Address2">Street Address Line 2:</label>
+          <input type="text" id="correspondent-Street-Address2" name="correspondent-Street-Address2">
 
-          <label for="correspondentCity">City:</label>
-          <input type="text" id="correspondentCity" name="correspondentCity">
+          <label for="correspondent-City">City:</label>
+          <input type="text" id="correspondent-City" name="correspondent-City">
 
-          <label for="correspondentState">State / Province:</label>
-          <input type="text" id="correspondentState" name="correspondentState">
+          <label for="correspondent-State">State / Province:</label>
+          <input type="text" id="correspondent-State" name="correspondent-State">
 
-          <label for="correspondentPostalCode">Postal / Zip Code:</label>
-          <input type="text" id="correspondentPostalCode" name="correspondentPostalCode">
+          <label for="corresponden-PostalCode">Postal / Zip Code:</label>
+          <input type="text" id="correspondent-PostalCode" name="correspondent-PostalCode">
 
           <!-- Previous School Information -->
           <h2>Previous School Information</h2>
-          <label for="lastSchoolName">Name of Last School:</label>
-          <input type="text" id="lastSchoolName" name="lastSchoolName" required>
+          <label for="last-School-Name">Name of Last School:</label>
+          <input type="text" id="last-School-Name" name="last-School-Name" required>
 
-          <label for="lastSchoolStandard">Standard in which pupil was studying:</label>
-          <select id="lastSchoolStandard" name="lastSchoolStandard" required>
+          <label for="last-School-Standard">Standard in which pupil was studying:</label>
+          <select id="last-School-Standard" name="last-School-Standard" required>
               <option value="">Please Select</option>
               <option value="kG1">KG1</option>
               <option value="KG2">KG2</option>
@@ -130,8 +130,8 @@
               <option value="GRADE-12">GRADE 12</option>
           </select>
 
-          <label for="admissionStandard">Standard in which admission is sought:</label>
-          <select id="admissionStandard" name="admissionStandard" required>
+          <label for="admission-Standard">Standard in which admission is sought:</label>
+          <select id="admission-Standard" name="admission-Standard" required>
               <option value="">Please Select</option>
               <option value="kG1">KG1</option>
               <option value="KG2">KG2</option>
@@ -151,38 +151,38 @@
               <option value="GRADE-12">GRADE 12</option>
           </select>
 
-          <label for="lastSchoolResult">Last School Result:</label>
-          <input type="text" id="lastSchoolResult" name="lastSchoolResult" required>
+          <label for="last-School-Result">Last School Result:</label>
+          <input type="text" id="last-School-Result" name="last-School-Result" required>
 
-          <label for="reasonForLeaving">Reason for Leaving Last School:</label>
-          <textarea id="reasonForLeaving" name="reasonForLeaving" rows="4" required></textarea>
+          <label for="reason-For-Leaving">Reason for Leaving Last School:</label>
+          <textarea id="reason-For-Leaving" name="reason-For-Leaving" rows="4" required></textarea>
 
           <!-- Guardian Information -->
           <h2>Guardian Information</h2>
-          <label for="admissionSoughtAs">Admission Sought As:</label>
-          <input type="text" id="admissionSoughtAs" name="admissionSoughtAs" required>
+          <label for="admission-Sought-As">Admission Sought As:</label>
+          <input type="text" id="admission-Sought-As" name="admission-Sough-As" required>
 
           <label for="localGuardianFirstName">Local Guardian First Name:</label>
-          <input type="text" id="localGuardianFirstName" name="localGuardianFirstName" required>
+          <input type="text" id="local-Guardian-FirstName" name="local-Guardian-FirstName" required>
 
-          <label for="localGuardianLastName">Local Guardian Last Name:</label>
-          <input type="text" id="localGuardianLastName" name="localGuardianLastName" required>
+          <label for="local-Guardian-LastName">Local Guardian Last Name:</label>
+          <input type="text" id="local-Guardian-LastName" name="local-Guardian-LastName" required>
 
-          <label for="localGuardianOccupation">Local Guardian Occupation:</label>
-          <input type="text" id="localGuardianOccupation" name="localGuardianOccupation" required>
+          <label for="local-Guardian-Occupation">Local Guardian Occupation:</label>
+          <input type="text" id="local-Guardian-Occupation" name="local-Guardian-Occupation" required>
 
-          <label for="localGuardianEmail">Local Guardian Email:</label>
-          <input type="email" id="localGuardianEmail" name="localGuardianEmail" required>
+          <label for="local-Guardian-Email">Local Guardian Email:</label>
+          <input type="email" id="local-Guardian-Email" name="local-Guardian-Email" required>
 
-          <label for="localGuardianPhone">Local Guardian Phone Number:</label>
-          <input type="tel" id="localGuardianPhone" name="localGuardianPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+          <label for="local-Guardian-Phone">Local Guardian Phone Number:</label>
+          <input type="tel" id="local-Guardian-Phone" name="local-Guardian-Phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
           <small>Format: 123-456-7890</small>
 
           <!-- Attachments -->
           <h2>Attachments</h2>
 
-          <label for="markList">Attach Scan copy of Last Report Card:</label>
-          <input type="file" id="markList" name="markList" accept=".pdf, .jpg, .jpeg, .png" required>
+          <label for="Report-Card">Attach Scan copy of Last Report Card:</label>
+          <input type="file" id="Report-Card" name="Report-Card" accept=".pdf, .jpg, .jpeg, .png" required>
 
           <!-- Submit Button -->
           <button type="submit">Submit</button>
