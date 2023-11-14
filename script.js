@@ -89,16 +89,19 @@ document.getElementById("contact-form").addEventListener("submit", function(even
     window.addEventListener('scroll', animateAnnouncementCards);
   
     // Read More functionality
-    const readMoreLinks = document.querySelectorAll('.read-more-link');
-  
-    readMoreLinks.forEach(link => {
-      link.addEventListener('click', function (event) {
-        event.preventDefault();
-        const card = this.closest('.announcement-card');
-        card.classList.toggle('expanded');
+    document.addEventListener('DOMContentLoaded', function () {
+      // Read More functionality
+      const readMoreLinks = document.querySelectorAll('.read-more-link');
+    
+      readMoreLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+          const card = this.closest('.announcement-card');
+          card.classList.toggle('show');
+        });
       });
-    });
-  });
+    });    
+  
   
   document.addEventListener('DOMContentLoaded', function () {
     const announcementCards = document.querySelectorAll('.announcement-card');
