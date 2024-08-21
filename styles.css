@@ -831,16 +831,26 @@ nav ul li a:hover {
 .contact {
   padding: 50px 0;
   text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .contact h2 {
-  margin-bottom: 30px;
-  font-size: 28px;
+  font-size: 32px;
   color: #333;
+  margin-bottom: 20px;
+}
+
+.contact p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 40px;
 }
 
 .contact-form {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
   text-align: left;
 }
@@ -859,23 +869,32 @@ nav ul li a:hover {
 .input-container input,
 .input-container textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
+.input-container input:focus,
+.input-container textarea:focus {
+  border-color: #2980b9;
+  outline: none;
+}
+
 .contact button[type="submit"] {
-  padding: 10px 20px;
-  background-color: #32CD32;
+  padding: 14px;
+  background-color: #2980b9;
   color: white;
+  font-size: 18px;
+  font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%;
 }
 
 .contact button[type="submit"]:hover {
-  background-color: #267026;
+  background-color: #1c5985;
 }
 
 /* Footer Section */
