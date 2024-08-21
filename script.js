@@ -1,5 +1,5 @@
 // Handle form submission
-document.getElementById("contact-form").addEventListener("submit", function(event) {
+document.getElementById("contact-form")?.addEventListener("submit", function(event) {
     event.preventDefault();
   
     // Fetch form data
@@ -7,14 +7,14 @@ document.getElementById("contact-form").addEventListener("submit", function(even
     const email = document.getElementById("email").value;
     const message = document.getElementById("message").value;
   
-    // You can perform actions with the form data here (e.g., send it to a server)
+    // Log form data
     console.log("Name:", name);
     console.log("Email:", email);
     console.log("Message:", message);
   
-    // Optionally, you can display a success message or reset the form
+    // Optionally, display a success message or reset the form
     alert("Form submitted successfully!");
-    document.getElementById("contact-form").reset();
+    this.reset(); // Reset form directly using 'this'
 });
 
 // Handle navigation toggle for mobile view
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
 
-    if (navToggle) {
+    if (navToggle && navMenu) {
         navToggle.addEventListener('click', function () {
             navMenu.classList.toggle('active');
         });
