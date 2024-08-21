@@ -633,6 +633,7 @@ nav ul li a:hover {
   font-weight: bold;
   color: green;
   animation: scroll-text 10s linear infinite;
+  text-align: center;
 }
 
 @keyframes scroll-text {
