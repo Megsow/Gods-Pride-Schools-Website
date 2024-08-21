@@ -30,6 +30,13 @@ body {
   border-radius: 8px;
 }
 
+/* Container */
+.container1 {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 /* Header Styles */
 header {
   background-color: white;
