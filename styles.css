@@ -25,6 +25,9 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 /* Header Styles */
@@ -98,6 +101,81 @@ nav ul li a:hover {
 
 .nav-menu.active {
   display: block;
+}
+
+/* Admissions Section */
+.admissions h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.admissions p {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 40px;
+}
+
+/* Admission Form Styles */
+.admission-form fieldset {
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.admission-form legend {
+  font-weight: bold;
+  color: #34495e;
+  padding: 0 10px;
+}
+
+.admission-form .form-group {
+  margin-bottom: 20px;
+}
+
+.admission-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.admission-form input[type="text"],
+.admission-form input[type="date"],
+.admission-form input[type="email"],
+.admission-form input[type="tel"],
+.admission-form input[type="file"],
+.admission-form select,
+.admission-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #34495e;
+  background-color: #ffffff;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.05);
+}
+
+.admission-form input[type="file"] {
+  padding: 3px;
+}
+
+.admission-form button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #2980b9;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.admission-form button[type="submit"]:hover {
+  background-color: #1c5985;
 }
 
 /* Scrolling Text */

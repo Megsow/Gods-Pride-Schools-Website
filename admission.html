@@ -40,89 +40,119 @@
   <div class="container">
     <section class="admissions">
       <h2>Admissions</h2>
-      <p>We're excited to welcome new students to our school. Please Apply with the form below.</p>
-
-      <h1>School Admission Form</h1>
-      <form action="https://formsubmit.co/8da530955ad70219843754c8964446b6" method="POST" enctype="multipart/form-data">
-        <!--Honeypot-->
+      <p>We're excited to welcome new students to our school. Please fill out the form below to apply.</p>
+  
+      <form action="https://formsubmit.co/8da530955ad70219843754c8964446b6" method="POST" enctype="multipart/form-data"
+        class="admission-form">
+        <!-- Honeypot -->
         <input type="text" name="_honey" style="display:none;">
-
-        <!--Disable Captcha-->
+  
+        <!-- Disable Captcha -->
         <input type="hidden" name="_captcha" value="false">
-
-        <!--Success method-->
+  
+        <!-- Success method -->
         <input type="hidden" name="_next" value="https://godspridegroupofschools.com/success.html">
+  
         <!-- Pupil's Information -->
-          <h2>Pupil's Information</h2>
-          <label for="first-Name">First Name:</label>
-          <input type="text" id="first-Name" name="first-Name" required>
-          
-          <label for="last-Name">Last Name:</label>
-          <input type="text" id="last-Name" name="last-Name" required>
-          
-          <label for="dob">Pupil's Date of Birth (MM-DD-YYYY):</label>
-          <input type="date" id="dob" name="dob" required>
-          
-          <label for="place-Of-Birth">Place of Birth:</label>
-          <input type="text" id="place-Of-Birth" name="place-Of-Birth" required>
-
-          <label for="state-Of-Origin">State Of Origin:</label>
-          <input type="text" id="state-Of-Origin" name="state-Of-Origin" required>
-
-          <label for="nationality">Nationality:</label>
-          <input type="text" id="nationality" name="nationality" required>
-
-          <label for="gender">Gender:</label>
-          <select id="gender" name="gender" required>
+        <fieldset>
+          <legend>Pupil's Information</legend>
+          <div class="form-group">
+            <label for="first-Name">First Name:</label>
+            <input type="text" id="first-Name" name="first-Name" required>
+          </div>
+          <div class="form-group">
+            <label for="last-Name">Last Name:</label>
+            <input type="text" id="last-Name" name="last-Name" required>
+          </div>
+          <div class="form-group">
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+          </div>
+          <div class="form-group">
+            <label for="place-Of-Birth">Place of Birth:</label>
+            <input type="text" id="place-Of-Birth" name="place-Of-Birth" required>
+          </div>
+          <div class="form-group">
+            <label for="state-Of-Origin">State Of Origin:</label>
+            <input type="text" id="state-Of-Origin" name="state-Of-Origin" required>
+          </div>
+          <div class="form-group">
+            <label for="nationality">Nationality:</label>
+            <input type="text" id="nationality" name="nationality" required>
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
               <option value="">Please Select</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
-          </select>
-
-          <!-- Residential Address -->
-          <h2>Residential Address</h2>
-          <label for="streetAddress">Street Address:</label>
-          <input type="text" id="streetAddress" name="streetAddress" required>
-
-          <label for="streetAddress2">Street Address Line 2:</label>
-          <input type="text" id="streetAddress2" name="streetAddress2">
-
-          <label for="city">City:</label>
-          <input type="text" id="city" name="city" required>
-
-          <label for="state">State / Province:</label>
-          <input type="text" id="state" name="state" required>
-
-          <label for="postalCode">Postal / Zip Code:</label>
-          <input type="text" id="postalCode" name="postalCode" required>
-
-          <!-- Correspondent Address -->
-          <h2>Correspondent Address (fill up only if different from Residential Address)</h2>
-          <label for="correspondent-Street-Address">Street Address:</label>
-          <input type="text" id="correspondent-Street-Address" name="correspondent-Street-Address">
-
-          <label for="correspondent-Street-Address2">Street Address Line 2:</label>
-          <input type="text" id="correspondent-Street-Address2" name="correspondent-Street-Address2">
-
-          <label for="correspondent-City">City:</label>
-          <input type="text" id="correspondent-City" name="correspondent-City">
-
-          <label for="correspondent-State">State / Province:</label>
-          <input type="text" id="correspondent-State" name="correspondent-State">
-
-          <label for="corresponden-PostalCode">Postal / Zip Code:</label>
-          <input type="text" id="correspondent-PostalCode" name="correspondent-PostalCode">
-
-          <!-- Previous School Information -->
-          <h2>Previous School Information</h2>
-          <label for="last-School-Name">Name of Last School:</label>
-          <input type="text" id="last-School-Name" name="last-School-Name" required>
-
-          <label for="last-School-Standard">Standard in which pupil was studying:</label>
-          <select id="last-School-Standard" name="last-School-Standard" required>
+            </select>
+          </div>
+        </fieldset>
+  
+        <!-- Residential Address -->
+        <fieldset>
+          <legend>Residential Address</legend>
+          <div class="form-group">
+            <label for="streetAddress">Street Address:</label>
+            <input type="text" id="streetAddress" name="streetAddress" required>
+          </div>
+          <div class="form-group">
+            <label for="streetAddress2">Street Address Line 2:</label>
+            <input type="text" id="streetAddress2" name="streetAddress2">
+          </div>
+          <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+          </div>
+          <div class="form-group">
+            <label for="state">State / Province:</label>
+            <input type="text" id="state" name="state" required>
+          </div>
+          <div class="form-group">
+            <label for="postalCode">Postal / Zip Code:</label>
+            <input type="text" id="postalCode" name="postalCode" required>
+          </div>
+        </fieldset>
+  
+        <!-- Correspondent Address -->
+        <fieldset>
+          <legend>Correspondent Address (if different from Residential Address)</legend>
+          <div class="form-group">
+            <label for="correspondent-Street-Address">Street Address:</label>
+            <input type="text" id="correspondent-Street-Address" name="correspondent-Street-Address">
+          </div>
+          <div class="form-group">
+            <label for="correspondent-Street-Address2">Street Address Line 2:</label>
+            <input type="text" id="correspondent-Street-Address2" name="correspondent-Street-Address2">
+          </div>
+          <div class="form-group">
+            <label for="correspondent-City">City:</label>
+            <input type="text" id="correspondent-City" name="correspondent-City">
+          </div>
+          <div class="form-group">
+            <label for="correspondent-State">State / Province:</label>
+            <input type="text" id="correspondent-State" name="correspondent-State">
+          </div>
+          <div class="form-group">
+            <label for="correspondent-PostalCode">Postal / Zip Code:</label>
+            <input type="text" id="correspondent-PostalCode" name="correspondent-PostalCode">
+          </div>
+        </fieldset>
+  
+        <!-- Previous School Information -->
+        <fieldset>
+          <legend>Previous School Information</legend>
+          <div class="form-group">
+            <label for="last-School-Name">Name of Last School:</label>
+            <input type="text" id="last-School-Name" name="last-School-Name" required>
+          </div>
+          <div class="form-group">
+            <label for="last-School-Standard">Standard in which pupil was studying:</label>
+            <select id="last-School-Standard" name="last-School-Standard" required>
               <option value="">Please Select</option>
-              <option value="kG1">KG1</option>
+              <option value="KG1">KG1</option>
               <option value="KG2">KG2</option>
               <option value="Nursery-1">Nursery 1</option>
               <option value="Nursery-2">Nursery 2</option>
@@ -138,12 +168,13 @@
               <option value="GRADE-10">GRADE 10</option>
               <option value="GRADE-11">GRADE 11</option>
               <option value="GRADE-12">GRADE 12</option>
-          </select>
-
-          <label for="admission-Standard">Standard in which admission is sought:</label>
-          <select id="admission-Standard" name="admission-Standard" required>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="admission-Standard">Standard in which admission is sought:</label>
+            <select id="admission-Standard" name="admission-Standard" required>
               <option value="">Please Select</option>
-              <option value="kG1">KG1</option>
+              <option value="KG1">KG1</option>
               <option value="KG2">KG2</option>
               <option value="Nursery-1">Nursery 1</option>
               <option value="Nursery-2">Nursery 2</option>
@@ -159,47 +190,66 @@
               <option value="GRADE-10">GRADE 10</option>
               <option value="GRADE-11">GRADE 11</option>
               <option value="GRADE-12">GRADE 12</option>
-          </select>
-
-          <label for="last-School-Result">Last School Result:</label>
-          <input type="text" id="last-School-Result" name="last-School-Result" required>
-
-          <label for="reason-For-Leaving">Reason for Leaving Last School:</label>
-          <textarea id="reason-For-Leaving" name="reason-For-Leaving" rows="4" required></textarea>
-
-          <!-- Guardian Information -->
-          <h2>Guardian Information</h2>
-          <label for="admission-Sought-As">Admission Sought As:</label>
-          <input type="text" id="admission-Sought-As" name="admission-Sough-As" required>
-
-          <label for="localGuardianFirstName">Local Guardian First Name:</label>
-          <input type="text" id="local-Guardian-FirstName" name="local-Guardian-FirstName" required>
-
-          <label for="local-Guardian-LastName">Local Guardian Last Name:</label>
-          <input type="text" id="local-Guardian-LastName" name="local-Guardian-LastName" required>
-
-          <label for="local-Guardian-Occupation">Local Guardian Occupation:</label>
-          <input type="text" id="local-Guardian-Occupation" name="local-Guardian-Occupation" required>
-
-          <label for="local-Guardian-Email">Local Guardian Email:</label>
-          <input type="email" id="local-Guardian-Email" name="local-Guardian-Email" required>
-
-          <label for="local-Guardian-Phone">Local Guardian Phone Number:</label>
-          <input type="tel" id="local-Guardian-Phone" name="local-Guardian-Phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
-          <small>Format: 123-456-7890</small>
-
-          <!-- Attachments -->
-          <h2>Attachments</h2>
-
-          <label for="Report-Card">Attach Scan copy of Last Report Card:</label>
-          <input type="file" id="Report-Card" name="Report-Card" accept=".pdf, .jpg, .jpeg, .png" required>
-
-          <!-- Submit Button -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="last-School-Result">Last School Result:</label>
+            <input type="text" id="last-School-Result" name="last-School-Result" required>
+          </div>
+          <div class="form-group">
+            <label for="reason-For-Leaving">Reason for Leaving Last School:</label>
+            <textarea id="reason-For-Leaving" name="reason-For-Leaving" rows="4" required></textarea>
+          </div>
+        </fieldset>
+  
+        <!-- Guardian Information -->
+        <fieldset>
+          <legend>Guardian Information</legend>
+          <div class="form-group">
+            <label for="admission-Sought-As">Admission Sought As:</label>
+            <input type="text" id="admission-Sought-As" name="admission-Sough-As" required>
+          </div>
+          <div class="form-group">
+            <label for="localGuardianFirstName">Local Guardian First Name:</label>
+            <input type="text" id="local-Guardian-FirstName" name="local-Guardian-FirstName" required>
+          </div>
+          <div class="form-group">
+            <label for="local-Guardian-LastName">Local Guardian Last Name:</label>
+            <input type="text" id="local-Guardian-LastName" name="local-Guardian-LastName" required>
+          </div>
+          <div class="form-group">
+            <label for="local-Guardian-Occupation">Local Guardian Occupation:</label>
+            <input type="text" id="local-Guardian-Occupation" name="local-Guardian-Occupation" required>
+          </div>
+          <div class="form-group">
+            <label for="local-Guardian-Email">Local Guardian Email:</label>
+            <input type="email" id="local-Guardian-Email" name="local-Guardian-Email" required>
+          </div>
+          <div class="form-group">
+            <label for="local-Guardian-Phone">Local Guardian Phone Number:</label>
+            <input type="tel" id="local-Guardian-Phone" name="local-Guardian-Phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              required>
+            <small>Format: 123-456-7890</small>
+          </div>
+        </fieldset>
+  
+        <!-- Attachments -->
+        <fieldset>
+          <legend>Attachments</legend>
+          <div class="form-group">
+            <label for="Report-Card">Attach Scan copy of Last Report Card:</label>
+            <input type="file" id="Report-Card" name="Report-Card" accept=".pdf, .jpg, .jpeg, .png" required>
+          </div>
+        </fieldset>
+  
+        <!-- Submit Button -->
+        <div class="form-group">
           <button type="submit">Submit</button>
+        </div>
       </form>
     </section>
-    <!-- Other content for the Admissions page -->
   </div>
+
    <footer>
     <div class="footer-content">
       <div class="footer-section">
