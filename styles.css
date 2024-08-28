@@ -21,20 +21,17 @@ body {
 }
 
 /* Container */
-.container {
+.container, .container1 {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+}
+
+/* Additional styles for .container only */
+.container {
   background-color: #ffffff;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-}
-
-/* Container1 */
-.container1 {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
 }
 
 /* Header Styles */
@@ -47,10 +44,6 @@ header {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-}
-
-.logo img {
-  max-height: 50px;
 }
 
 header h1 {
@@ -114,7 +107,6 @@ nav ul li a:hover {
 .scrolling-text {
   white-space: nowrap;
   overflow: hidden;
-  box-sizing: border-box;
   width: 100%;
   padding: 10px 0;
   background-color: #f5f5f5;
@@ -127,10 +119,24 @@ nav ul li a:hover {
   0% {
     transform: translateX(100%);
   }
-
   100% {
     transform: translateX(-100%);
   }
+}
+
+/* Section Titles */
+.section-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #333;
+}
+
+/* Cards Layout */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 /* Announcement Section */
@@ -139,16 +145,7 @@ nav ul li a:hover {
 }
 
 .announcement h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 28px;
-  color: #333;
-}
-
-.announcement-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  @extend .section-title;
 }
 
 .announcement-card {
@@ -194,16 +191,6 @@ nav ul li a:hover {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
-.expanded-content {
-  display: none;
-  padding: 15px;
-  color: #555;
-}
-
-.expanded-content.show {
-  display: block;
-}
-
 /* Testimonial Section */
 .testimonial {
   background-color: #f7f7f7;
@@ -211,24 +198,12 @@ nav ul li a:hover {
 }
 
 .testimonial h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 28px;
-  color: #333;
-}
-
-.testimonial-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  @extend .section-title;
 }
 
 .testimonial-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  @extend .announcement-card;
   padding: 20px;
-  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .testimonial-card p {
@@ -244,11 +219,6 @@ nav ul li a:hover {
   color: #32CD32;
 }
 
-.testimonial-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-}
-
 /* Media Gallery Section */
 .media1 {
   padding: 50px 0;
@@ -256,30 +226,18 @@ nav ul li a:hover {
 }
 
 .media1 h2 {
-  margin-bottom: 30px;
-  font-size: 28px;
-  color: #333;
+  @extend .section-title;
 }
 
 .media-gallery {
-  display: grid;
+  @extend .cards-grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
 }
 
 .media-item {
+  @extend .announcement-card;
   position: relative;
   background-color: #f5f5f5;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.media-item img {
-  width: 100%;
-  height: auto;
-  transition: transform 0.3s;
 }
 
 .media-info {
@@ -294,17 +252,8 @@ nav ul li a:hover {
   transition: transform 0.3s;
 }
 
-.media-item:hover img {
-  transform: scale(1.1);
-}
-
 .media-item:hover .media-info {
   transform: translateY(0);
-}
-
-.media-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Contact Section */
@@ -318,15 +267,8 @@ nav ul li a:hover {
 }
 
 .contact h2 {
+  @extend .section-title;
   font-size: 32px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.contact p {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 40px;
 }
 
 .contact-form {
@@ -335,6 +277,7 @@ nav ul li a:hover {
   text-align: left;
 }
 
+/* Form Styling */
 .input-container {
   margin-bottom: 20px;
 }
@@ -360,7 +303,8 @@ nav ul li a:hover {
   outline: none;
 }
 
-.contact button[type="submit"] {
+.contact button[type="submit"],
+.admission-form button[type="submit"] {
   padding: 14px;
   background-color: #2980b9;
   color: white;
@@ -373,8 +317,67 @@ nav ul li a:hover {
   width: 100%;
 }
 
-.contact button[type="submit"]:hover {
+.contact button[type="submit"]:hover,
+.admission-form button[type="submit"]:hover {
   background-color: #1c5985;
+}
+
+/* Admissions Section */
+.admissions {
+  padding: 50px 0;
+}
+
+.admissions h2 {
+  @extend .section-title;
+  color: #2c3e50;
+}
+
+.admissions p {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 40px;
+}
+
+/* Admission Form Styles */
+.admission-form fieldset {
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.admission-form legend {
+  font-weight: bold;
+  color: #34495e;
+  padding: 0 10px;
+}
+
+.admission-form .form-group {
+  margin-bottom: 20px;
+}
+
+.admission-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.admission-form input[type="text"],
+.admission-form input[type="date"],
+.admission-form input[type="email"],
+.admission-form input[type="tel"],
+.admission-form input[type="file"],
+.admission-form select,
+.admission-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #34495e;
+  background-color: #ffffff;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.05);
 }
 
 /* Footer Section */
