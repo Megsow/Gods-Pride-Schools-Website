@@ -454,6 +454,37 @@ nav ul li a:hover {
   background-color: #1c5985;
 }
 
+.parents-corner {
+  background-color: #f7f7f7;
+  padding: 50px 0;
+  border-top: 5px solid #0056b3;
+  margin-top: 50px;
+}
+.section-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  font-size: 18px;
+  color: #666;
+}
+.parents-corner ul {
+  list-style: none;
+  padding: 0 15px 15px;
+  color: #555;
+}
+.parents-corner ul li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+.parents-corner ul li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: bold;
+}
+
 /* Footer Section */
 footer {
   background-color: green;
@@ -570,80 +601,4 @@ footer {
     align-items: center;
   }
 
-  .parents-corner {
-  background-color: #f3f8fc;
-  padding: 60px 20px;
-  border-top: 5px solid #0056b3;
-  margin-top: 50px;
-}
-.section-title {
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 20px;
-  color: #0056b3;
-  font-weight: 700;
-}
-.section-intro {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 40px;
-  color: #444;
-  font-size: 18px;
-  line-height: 1.6;
-}
-.parents-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-}
-.parents-card {
-  background: white;
-  border-radius: 10px;
-  padding: 25px 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
-}
-.parents-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-.parents-card h3 {
-  font-size: 22px;
-  margin-bottom: 15px;
-  color: #0070c9;
-}
-.parents-card ul {
-  list-style: none;
-  padding: 0;
-}
-.parents-card ul li {
-  margin-bottom: 10px;
-  padding-left: 24px;
-  position: relative;
-  color: #333;
-  font-size: 16px;
-  line-height: 1.4;
-}
-.parents-card ul li::before {
-  content: "\2713";
-  position: absolute;
-  left: 0;
-  color: #28a745;
-  font-weight: bold;
-}
-@media (max-width: 768px) {
-  .section-title {
-    font-size: 24px;
-  }
-  .parents-card h3 {
-    font-size: 18px;
-  }
-  .parents-card ul li {
-    font-size: 15px;
-  }
-}
-
-  .nav-toggle {
-    display: block;
-  }
-}
+  
