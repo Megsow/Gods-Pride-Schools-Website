@@ -326,6 +326,29 @@ nav ul li a:hover {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
+.testimonial-carousel {
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.testimonial-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 10px;
+}
+.testimonial-content p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+}
+.testimonial-content cite {
+  display: block;
+  text-align: right;
+  font-size: 14px;
+  color: #32CD32;
+}
+
 /* Media Gallery Section */
 .media1 {
   padding: 50px 0;
