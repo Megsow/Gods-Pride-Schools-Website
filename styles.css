@@ -695,4 +695,34 @@ footer {
     align-items: center;
   }
 
+  .about-section.owner {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.owner-image img {
+  width: 100%;
+  max-width: 80%;
+  margin-bottom: 20px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+.owner-info {
+  flex: 1;
+}
+.owner-info h3 {
+  font-size: 20px;
+  color: #0056b3;
+  margin-bottom: 20px;
+}
+.owner-info p {
+  line-height: 1.8;
+  color: #444;
+}
+
   
