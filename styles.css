@@ -709,7 +709,7 @@ footer {
 }
 .owner-image img {
   width: 100%;
-  max-width: 320px;
+  max-width: 100px;
   margin-bottom: 60px;
   height: auto;
   border-radius: 8px;
