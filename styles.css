@@ -215,6 +215,8 @@ nav ul li a:hover {
 /* Announcement Section */
 .announcement {
   padding: 50px 0;
+  background-color: #f7f7f7;
+  border-top: 5px solid #0056b3;
 }
 
 .announcement h2 {
@@ -288,6 +290,7 @@ nav ul li a:hover {
 .testimonial {
   background-color: #f7f7f7;
   padding: 50px 0;
+  border-top: 5px solid #0056b3;
 }
 
 .testimonial h2 {
@@ -357,6 +360,8 @@ nav ul li a:hover {
 .media1 {
   padding: 50px 0;
   text-align: center;
+  background-color: #f7f7f7;
+  border-top: 5px solid #0056b3;
 }
 
 .media1 h2 {
@@ -421,6 +426,7 @@ nav ul li a:hover {
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  border-top: 5px solid #0056b3;
 }
 
 .contact h2 {
@@ -488,6 +494,7 @@ nav ul li a:hover {
 .parents-corner {
   padding: 60px 20px;
   border-top: 5px solid #0056b3;
+  background-color: #f7f7f7;
 }
 .section-title {
   text-align: center;
