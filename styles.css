@@ -779,15 +779,6 @@ footer {
     margin-top: 0;
   }
 
-  nav ul {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  nav ul li {
-    margin: 10px 0;
-  }
-
   .announcement-cards,
   .testimonial-cards,
   .media-gallery {
@@ -807,12 +798,34 @@ footer {
     margin-bottom: 20px;
   }
 
+}
+
+/* Mobile: show hamburger, hide menu by default */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  /* 2. Hide the nav list until toggled */
   .nav-menu {
     display: none;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column;     
+    background-color: green;    
+    width: 100%;
+  }
+
+  /* 3. When .active is added, show the list */
+  .nav-menu.active {
+    display: flex;
+  }
+
+  /* 4. Give each link room to breathe */
+  .nav-menu li {
+    margin: 10px 0;
+    text-align: center;
   }
 }
+
 
 @media (max-width: 768px) {
   .card {
