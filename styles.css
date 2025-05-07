@@ -586,23 +586,47 @@ nav ul li a:hover {
   font-weight: bold;
 }
 
+/* ---- About / Proprietor Section ---- */
 .about-section.owner {
   display: flex;
+  flex-direction: column;   
+  align-items: center;      
+  text-align: center;       
   gap: 40px;
   margin-bottom: 60px;
-  flex-direction: column;
-  text-align: center;
-  align-items: flex-start;
 }
+
+/* On larger screens, switch to side-by-side */
+@media (min-width: 768px) {
+  .about-section.owner {
+    flex-direction: row;     
+    align-items: flex-start; 
+    text-align: left;        
+  }
+
+  .owner-image,
+  .owner-info {
+    flex: 1;                 
+  }
+}
+
+/* Center the image within its flex‐item */
+.owner-image {
+  display: flex;
+  justify-content: center;   
+}
+
 .owner-image img {
-  width: 100%;
-  max-width: 50px;
-  margin-bottom: 60px;
+  display: block;            
+  width: 100%;               
+  max-width: clamp(16rem, 50vw, 25rem);
   height: auto;
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   object-fit: cover;
+  margin-bottom: 0;          
 }
+
 .owner-info {
   flex: 1;
 }
