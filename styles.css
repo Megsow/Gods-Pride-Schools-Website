@@ -232,7 +232,7 @@ nav ul li a:hover {
   box-sizing: border-box;
   width: 100%;
   padding: 10px 0;
-  background-color: #f5f5f5;
+  background-color: white;
   font-weight: bold;
   color: green;
   animation: scroll-text 10s linear infinite;
