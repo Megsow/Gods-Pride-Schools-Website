@@ -1,9 +1,6 @@
 import { signInWithEmail, signInWithGoogle } from "../../firebase/config.js";
 
-const DEFAULT_ADMIN_EMAIL = "admin@godspridegroupofschools.com";
-const DEFAULT_ADMIN_PASSWORD = "gpnps2003@megsow";
-
-export function renderLoginView(root, { onSuccess }) {
+export function renderLoginView(root, { onSuccess, credentials } = {}) {
   root.innerHTML = "";
 
   const card = document.createElement("section");
@@ -29,7 +26,6 @@ export function renderLoginView(root, { onSuccess }) {
     label: "Email",
     type: "email",
     id: "admin-email",
-    placeholder: DEFAULT_ADMIN_EMAIL,
     autocomplete: "email"
   });
 
@@ -61,6 +57,10 @@ export function renderLoginView(root, { onSuccess }) {
 
   card.append(title, description, credentialsNote, form, googleButton, status);
   root.append(card);
+
+  if (credentials) {
+    prefillCredentials(credentials);
+  }
 
   let isSubmitting = false;
 
@@ -149,6 +149,15 @@ export function renderLoginView(root, { onSuccess }) {
     } else if (button.dataset.originalText) {
       button.textContent = button.dataset.originalText;
       delete button.dataset.originalText;
+    }
+  }
+
+  function prefillCredentials({ email, password } = {}) {
+    if (typeof email === "string") {
+      emailField.input.value = email;
+    }
+    if (typeof password === "string") {
+      passwordField.input.value = password;
     }
   }
 }
