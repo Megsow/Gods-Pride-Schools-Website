@@ -1,104 +1,108 @@
 // Handle form submission
-document.getElementById("contact-form")?.addEventListener("submit", function(event) {
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+  contactForm.addEventListener('submit', event => {
     event.preventDefault();
-  
-    // Fetch form data
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const message = document.getElementById("message").value;
-  
-    // Log form data
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Message:", message);
-  
-    // Optionally, display a success message or reset the form
-    alert("Form submitted successfully!");
-    this.reset(); // Reset form directly using 'this'
-});
 
-// Handle navigation toggle for mobile view
-document.addEventListener('DOMContentLoaded', function () {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
+    const formData = new FormData(contactForm);
+    console.log('Name:', formData.get('name'));
+    console.log('Email:', formData.get('email'));
+    console.log('Message:', formData.get('message'));
 
-    if (navToggle && navMenu) {
-        navToggle.addEventListener('click', function () {
-            navMenu.classList.toggle('active');
-        });
-    }
-});
+    alert('Form submitted successfully!');
+    contactForm.reset();
+  });
+}
 
-// Animate testimonials when they come into view
-document.addEventListener('DOMContentLoaded', function () {
-    const testimonialCards = document.querySelectorAll('.testimonial-card');
-    
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-        );
-    }
-  
-    function animateTestimonials() {
-        testimonialCards.forEach(card => {
-            if (isInViewport(card)) {
-                card.classList.add('show');
-            }
-        });
-    }
-  
-    window.addEventListener('scroll', animateTestimonials);
-    animateTestimonials(); // Run on page load
-});
-
-// Animate announcement cards when they come into view and handle "Read More" functionality
-document.addEventListener('DOMContentLoaded', function () {
-    const announcementCards = document.querySelectorAll('.announcement-card');
-    const readMoreLinks = document.querySelectorAll('.read-more-link');
-  
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-        );
-    }
-  
-    function animateAnnouncementCards() {
-        announcementCards.forEach(card => {
-            if (isInViewport(card)) {
-                card.classList.add('show');
-            }
-        });
-    }
-  
-    window.addEventListener('scroll', animateAnnouncementCards);
-    animateAnnouncementCards(); // Run on page load
-  
-    // Handle "Read More" functionality
-    readMoreLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            const card = this.closest('.announcement-card');
-            const expandedContent = card.querySelector('.expanded-content');
-
-            if (expandedContent) {
-                expandedContent.classList.toggle('show');
-                this.textContent = expandedContent.classList.contains('show') ? 'Read Less' : 'Read More';
-            }
-        });
+function initNavToggle() {
+  const navToggle = document.querySelector('.nav-toggle');
+  const navMenu = document.querySelector('.nav-menu');
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
     });
+  }
+}
+
+function setupRevealAnimation(selector, revealClass) {
+  const elements = Array.from(document.querySelectorAll(selector));
+  if (!elements.length) {
+    return;
+  }
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+  }
+  function animate() {
+    elements.forEach(element => {
+      if (isInViewport(element)) {
+        element.classList.add(revealClass);
+      }
+    });
+  }
+  window.addEventListener('scroll', animate);
+  animate();
+}
+
+function initReadMoreDelegation() {
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('.read-more-link');
+    if (!trigger) {
+      return;
+    }
+    event.preventDefault();
+    const card = trigger.closest('.announcement-card');
+    const expandedContent = card?.querySelector('.expanded-content');
+    if (!expandedContent) {
+      return;
+    }
+    expandedContent.classList.toggle('show');
+    trigger.textContent = expandedContent.classList.contains('show') ? 'Read Less' : 'Read More';
+  });
+}
+
+function initialiseTestimonialCarousel() {
+  if (typeof window.$ !== 'function') {
+    return;
+  }
+  const $carousel = window.$('.testimonial-carousel');
+  if (!$carousel.length) {
+    return;
+  }
+  if ($carousel.hasClass('slick-initialized')) {
+    $carousel.slick('unslick');
+  }
+  $carousel.slick({
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initNavToggle();
+  setupRevealAnimation('.testimonial-card', 'show');
+  setupRevealAnimation('.announcement-card', 'show');
+  initReadMoreDelegation();
+  initialiseTestimonialCarousel();
 });
 
-// Initialize Bootstrap carousel
-$(document).ready(function () {
-    if ($('#myCarousel').length > 0) {
-        $('#myCarousel').carousel({
-            interval: 5000,
-            pause: 'hover',
-            wrap: true
-        });
-    }
+document.addEventListener('collection:hydrated', event => {
+  if (event.detail?.key === 'announcements') {
+    setupRevealAnimation('.announcement-card', 'show');
+  }
+  if (event.detail?.key === 'testimonials') {
+    initialiseTestimonialCarousel();
+    setupRevealAnimation('.testimonial-card', 'show');
+  }
 });

@@ -13,16 +13,22 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-<body>
+<body data-page="about">
   <header>
     <div class="logo">
-      <img src="logo_left.JPG" alt="Left Logo">
+      <img src="logo_left.JPG" alt="Left Logo" data-document="settings/global" data-field="logos.left.url"
+        data-attr="src" data-fallback="logo_left.JPG">
     </div>
-    <h1>GOD'S PRIDE GROUP OF SCHOOLS
-      <p class="slogan">Building Spiritual, Moral and Academic Excellence on a Firm Foundation</p>
-    </h1>
+    <div class="header-title">
+      <h1>
+        <span data-document="settings/global" data-field="siteName">GOD'S PRIDE GROUP OF SCHOOLS</span>
+      </h1>
+      <p class="slogan" data-document="settings/global" data-field="tagline">Building Spiritual, Moral and Academic
+        Excellence on a Firm Foundation</p>
+    </div>
     <div class="logo">
-      <img src="logo_right.JPG" alt="Right Logo">
+      <img src="logo_right.JPG" alt="Right Logo" data-document="settings/global" data-field="logos.right.url"
+        data-attr="src" data-fallback="logo_right.JPG">
     </div>
   </header>
 
@@ -40,14 +46,16 @@
 
   <main class="container">
     <section class="about">
-      <h2 class="section-title">About Us</h2>
+      <h2 class="section-title" data-document="content/about" data-field="title">About Us</h2>
       <div class="about-section owner">
         <div class="owner-image">
-          <img src="owner-image.jpg" alt="Mrs. Mojisola Sowunmi, Proprietor" class="responsive-image">
+          <img src="owner-image.jpg" alt="Mrs. Mojisola Sowunmi, Proprietor" class="responsive-image"
+            data-document="content/about" data-field="owner.image.url" data-attr="src"
+            data-fallback="owner-image.jpg">
         </div>
         <div class="owner-info">
-          <h3>The Proprietor</h3>
-          <p>
+          <h3 data-document="content/about" data-field="owner.title">The Proprietor</h3>
+          <p data-document="content/about" data-field="owner.description" data-field-type="html">
             Mrs. Sowunmi O. Mojisola, an extraordinary educator, responded to a divine calling to nurture children and
             youth. She and her husband Mr. Oludare O. Sowunmi founded God's Pride Schools and God's Pride Educational
             Consultancy. As CEO, she orchestrates collaborative efforts, elevating standards and opportunities. She
@@ -67,41 +75,43 @@
         </div>
       </div>
       <div class="about-section mandate">
-        <h3>The Mandate</h3>
-        <p>God's Pride School is a mandate and a God-given school born out of the vision and mission to raise a
-          generation of new academics founded on Godly values. That is why our Motto for the Primary School is "Firm
-          Foundation." We are called to raise a child firmly rooted and established in God. Colossians 2:7.</p>
+        <h3 data-document="content/about" data-field="mandate.title">The Mandate</h3>
+        <p data-document="content/about" data-field="mandate.description" data-field-type="html">God's Pride School is
+          a mandate and a God-given school born out of the vision and mission to raise a generation of new academics
+          founded on Godly values. That is why our Motto for the Primary School is "Firm Foundation." We are called to
+          raise a child firmly rooted and established in God. Colossians 2:7.</p>
       </div>
       <div class="about-section vision">
-        <h3>Our Vision</h3>
-        <p>Our vision is based on certain fundamental principles that are bound to basic moral, spiritual, and academic
-          excellence that will make every child excel in different areas of life in his or her future endeavors, thus
-          becoming a pride to his/her parent, nation, the world at large, and to God Almighty, the creator of heaven and
-          earth.</p>
+        <h3 data-document="content/about" data-field="vision.title">Our Vision</h3>
+        <p data-document="content/about" data-field="vision.description" data-field-type="html">Our vision is based on
+          certain fundamental principles that are bound to basic moral, spiritual, and academic excellence that will
+          make every child excel in different areas of life in his or her future endeavors, thus becoming a pride to
+          his/her parent, nation, the world at large, and to God Almighty, the creator of heaven and earth.</p>
       </div>
       <div class="about-section mission">
-        <h3>Our Mission</h3>
-        <p>To create a purpose-driven youth; thereby helping them identify their individual gifts, talents, and
-          potentials, thus helping them grow into educated, responsible, and reliable global citizens on whom their
-          parents, society, the nation, the world at large, and God can rely on.</p>
+        <h3 data-document="content/about" data-field="mission.title">Our Mission</h3>
+        <p data-document="content/about" data-field="mission.description" data-field-type="html">To create a
+          purpose-driven youth; thereby helping them identify their individual gifts, talents, and potentials, thus
+          helping them grow into educated, responsible, and reliable global citizens on whom their parents, society, the
+          nation, the world at large, and God can rely on.</p>
       </div>
       <div class="about-section values">
-        <h3>Our Values</h3>
-        <p>Our values are based solely on the word of God (2 Peter 1:5-7). At God's Pride School, we also teach our
-          pupils and students practical life skills, vocational and entrepreneurial skills, life skills values, good
-          etiquette and manners, Jolly phonics, and diction; how to speak right so that they will be able to stand out
-          anywhere they go. Apart from academics, we help our students to develop holistically. The students are
-          inspired and encouraged to work hard to achieve all-around excellence in life and also to develop their
-          leadership qualities.</p>
+        <h3 data-document="content/about" data-field="values.title">Our Values</h3>
+        <p data-document="content/about" data-field="values.description" data-field-type="html">Our values are based
+          solely on the word of God (2 Peter 1:5-7). At God's Pride School, we also teach our pupils and students
+          practical life skills, vocational and entrepreneurial skills, life skills values, good etiquette and manners,
+          Jolly phonics, and diction; how to speak right so that they will be able to stand out anywhere they go. Apart
+          from academics, we help our students to develop holistically. The students are inspired and encouraged to work
+          hard to achieve all-around excellence in life and also to develop their leadership qualities.</p>
       </div>
       <div class="about-section entrepreneurship">
-        <h3>God's Pride Entrepreneurship Centre</h3>
-        <p>All students, irrespective of their chosen area of discipline, must take two entrepreneurship courses, of
-          which computer education is compulsory. Other courses we will be introducing will include electrical
-          installation and maintenance, catering and hospitality management, tailoring and fashion design, hat making,
-          leather goods production, event decoration, and planning. This is to ensure every student of the college
-          acquires a minimum of two skills he/she can practice to generate income during and after graduating from the
-          college.</p>
+        <h3 data-document="content/about" data-field="entrepreneurship.title">God's Pride Entrepreneurship Centre</h3>
+        <p data-document="content/about" data-field="entrepreneurship.description" data-field-type="html">All
+          students, irrespective of their chosen area of discipline, must take two entrepreneurship courses, of which
+          computer education is compulsory. Other courses we will be introducing will include electrical installation
+          and maintenance, catering and hospitality management, tailoring and fashion design, hat making, leather goods
+          production, event decoration, and planning. This is to ensure every student of the college acquires a minimum
+          of two skills he/she can practice to generate income during and after graduating from the college.</p>
       </div>
     </section>
   </main>
@@ -111,8 +121,10 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>Contact Us</h3>
-        <p>Email: godsprideschools2004@gmail.com</p>
-        <p>Phone: +234-9073366566, +234-8023516321</p>
+        <p>Email: <span data-document="settings/global" data-field="contact.email">godsprideschools2004@gmail.com</span>
+        </p>
+        <p>Phone: <span data-document="settings/global" data-field="contact.phone">+234-9073366566, +234-8023516321</span>
+        </p>
       </div>
       <div class="footer-section">
         <h3>Quick Links</h3>
@@ -128,19 +140,21 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <ul class="social-links">
-          <li><a href="https://www.facebook.com/godspridecollege2004"><img src="facebook-icon.png" alt="Facebook"></a>
+          <li><a href="https://www.facebook.com/godspridecollege2004" data-document="settings/global"
+              data-field="social.facebook" data-attr="href"><img src="facebook-icon.png" alt="Facebook"></a>
           </li>
-          <li><a href="https://instagram.com/godsprideschool?igshid=MzRlODBiNWFlZA=="><img src="instagram-icon.png"
-                alt="Instagram"></a></li>
+          <li><a href="https://instagram.com/godsprideschool?igshid=MzRlODBiNWFlZA==" data-document="settings/global"
+              data-field="social.instagram" data-attr="href"><img src="instagram-icon.png" alt="Instagram"></a></li>
         </ul>
       </div>
       <div class="footer-section">
         <h3>Our Address</h3>
-        <p>13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba, Sango Ota, Ogun State.</p>
+        <p data-document="settings/global" data-field="address">13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba,
+          Sango Ota, Ogun State.</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 MEGSOW. All Rights Reserved.</p>
+      <p data-document="settings/global" data-field="footer.copyright">&copy; 2025 MEGSOW. All Rights Reserved.</p>
     </div>
   </footer>
 
@@ -149,6 +163,8 @@
     src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="firebase-config.js"></script>
+  <script type="module" src="src/main.js"></script>
   <script src="script.js"></script>
   
 </body>
