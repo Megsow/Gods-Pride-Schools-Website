@@ -14,11 +14,6 @@ export function renderLoginView(root, { onSuccess, credentials } = {}) {
   description.textContent =
     "Sign in with an administrator account to manage site copy and media metadata.";
 
-  const credentialsNote = document.createElement("p");
-  credentialsNote.className = "helper-text";
-  credentialsNote.textContent =
-    "Default admin credentials are pre-filled below for convenience.";
-
   const form = document.createElement("form");
   form.noValidate = true;
 
@@ -52,10 +47,7 @@ export function renderLoginView(root, { onSuccess, credentials } = {}) {
 
   form.append(emailField.field, passwordField.field, submitButton);
 
-  emailField.input.value = DEFAULT_ADMIN_EMAIL;
-  passwordField.input.value = DEFAULT_ADMIN_PASSWORD;
-
-  card.append(title, description, credentialsNote, form, googleButton, status);
+  card.append(title, description, form, googleButton, status);
   root.append(card);
 
   if (credentials) {

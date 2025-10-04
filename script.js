@@ -89,12 +89,41 @@ function initialiseTestimonialCarousel() {
   });
 }
 
+function injectSiteCredit() {
+  if (document.querySelector('.site-credit')) {
+    return;
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'site-credit';
+
+  const inner = document.createElement('div');
+  inner.className = 'site-credit__inner';
+
+  const logo = document.createElement('img');
+  logo.src = 'megsow-nation-logo.svg';
+  logo.alt = 'Megsow Nation logo';
+  logo.className = 'site-credit__logo';
+  logo.loading = 'lazy';
+
+  const label = document.createElement('span');
+  label.className = 'site-credit__label';
+  label.innerHTML = 'Website by <strong>Megsow</strong>';
+
+  inner.append(logo, label);
+  wrapper.append(inner);
+  document.body?.appendChild(wrapper);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   setupRevealAnimation('.testimonial-card', 'show');
   setupRevealAnimation('.announcement-card', 'show');
   initReadMoreDelegation();
   initialiseTestimonialCarousel();
+  injectSiteCredit();
+});
+
 // Handle navigation toggle for mobile view
 document.addEventListener('DOMContentLoaded', function () {
     const navToggle = document.querySelector('.nav-toggle');
