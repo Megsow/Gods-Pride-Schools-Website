@@ -27,3 +27,4 @@ if (injectedConfig && injectedConfig.apiKey) {
 
 export { firebaseApp, auth, firestore, storage };
 export const hasFirebaseConfig = Boolean(firebaseApp);
+
