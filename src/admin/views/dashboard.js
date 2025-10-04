@@ -3,7 +3,9 @@ import {
   saveDocument,
   subscribeToCollection,
   subscribeToDocument,
-  signOutUser
+  signOutUser,
+  uploadFileToStorage,
+  deleteStorageObject
 } from "../../firebase/config.js";
 import { getNestedValue } from "../../utils/object.js";
 import { createRouter } from "../router.js";
@@ -25,7 +27,16 @@ const ANNOUNCEMENT_FIELDS = [
     placeholder: "<p>Full announcement details...</p>",
     trim: false
   },
-  { name: "image.url", label: "Image URL", type: "url", placeholder: "https://..." },
+  {
+    name: "image.url",
+    label: "Image",
+    type: "image",
+    storageFolder: "announcements",
+    storagePathField: "image.storagePath",
+    accept: "image/*",
+    helper: "Upload a featured image or paste an existing URL.",
+    maxFileSize: 5 * 1024 * 1024
+  },
   { name: "image.alt", label: "Image alt text", placeholder: "Students celebrating" },
   {
     name: "publishedAt",
@@ -77,7 +88,16 @@ const NEWS_FIELDS = [
     trim: false
   },
   { name: "link", label: "External link", type: "url", placeholder: "https://example.com/full-story" },
-  { name: "image.url", label: "Image URL", type: "url", placeholder: "https://..." },
+  {
+    name: "image.url",
+    label: "Image",
+    type: "image",
+    storageFolder: "news",
+    storagePathField: "image.storagePath",
+    accept: "image/*",
+    helper: "Upload a cover image or paste an existing URL.",
+    maxFileSize: 5 * 1024 * 1024
+  },
   { name: "image.alt", label: "Image alt text", placeholder: "Students receiving awards" },
   {
     name: "publishedAt",
@@ -89,7 +109,17 @@ const NEWS_FIELDS = [
 ];
 
 const CAROUSEL_FIELDS = [
-  { name: "url", label: "Image URL", type: "url", required: true, placeholder: "https://..." },
+  {
+    name: "url",
+    label: "Image",
+    type: "image",
+    required: true,
+    storageFolder: "media/home-carousel",
+    storagePathField: "storagePath",
+    accept: "image/*",
+    helper: "Upload the slide image or paste an existing URL.",
+    maxFileSize: 6 * 1024 * 1024
+  },
   { name: "alt", label: "Alt text", required: true, placeholder: "Students celebrating" },
   { name: "caption", label: "Caption", placeholder: "Graduation day" },
   { name: "description", label: "Description", type: "textarea", placeholder: "Optional supporting text." },
@@ -102,7 +132,17 @@ const CAROUSEL_FIELDS = [
 ];
 
 const GALLERY_FIELDS = [
-  { name: "url", label: "Image URL", type: "url", required: true, placeholder: "https://..." },
+  {
+    name: "url",
+    label: "Image",
+    type: "image",
+    required: true,
+    storageFolder: "media/gallery",
+    storagePathField: "storagePath",
+    accept: "image/*",
+    helper: "Upload a gallery image or paste an existing URL.",
+    maxFileSize: 6 * 1024 * 1024
+  },
   { name: "alt", label: "Alt text", required: true, placeholder: "Students in robotics lab" },
   { name: "caption", label: "Caption", placeholder: "Robotics" },
   {
@@ -404,8 +444,26 @@ function createSettingsSection(statusArea) {
         required: true,
         placeholder: "Building Spiritual, Moral and Academic Excellence on a Firm Foundation"
       },
-      { name: "logos.left.url", label: "Left logo URL", type: "url", placeholder: "https://..." },
-      { name: "logos.right.url", label: "Right logo URL", type: "url", placeholder: "https://..." },
+      {
+        name: "logos.left.url",
+        label: "Left logo",
+        type: "image",
+        storageFolder: "settings/logos",
+        storagePathField: "logos.left.storagePath",
+        accept: "image/*",
+        helper: "Upload the header's left logo or paste a URL.",
+        maxFileSize: 4 * 1024 * 1024
+      },
+      {
+        name: "logos.right.url",
+        label: "Right logo",
+        type: "image",
+        storageFolder: "settings/logos",
+        storagePathField: "logos.right.storagePath",
+        accept: "image/*",
+        helper: "Upload the header's right logo or paste a URL.",
+        maxFileSize: 4 * 1024 * 1024
+      },
       { name: "contact.email", label: "Contact email", type: "email", placeholder: "info@example.com" },
       { name: "contact.phone", label: "Contact phone", placeholder: "+234-..." },
       { name: "address", label: "Address", type: "textarea", required: true, placeholder: "Street, City, State." },
@@ -660,7 +718,11 @@ function createCollectionSection({
   function resetForm() {
     controls.forEach((control) => {
       control.clearError();
-      control.setValue(control.config.type === "list" ? [] : "");
+      if (control.config.type === "list") {
+        control.setValue([], {});
+      } else {
+        control.setValue("", {});
+      }
     });
   }
 
@@ -668,7 +730,11 @@ function createCollectionSection({
     submitButton.disabled = value;
     resetButton.disabled = value;
     controls.forEach((control) => {
-      control.input.disabled = value;
+      if (typeof control.setDisabled === "function") {
+        control.setDisabled(value);
+      } else if (control.input) {
+        control.input.disabled = value;
+      }
     });
     if (value) {
       submitButton.dataset.originalLabel = submitButton.textContent;
@@ -734,9 +800,9 @@ function createCollectionSection({
       controls.forEach((control) => {
         const value = getNestedValue(item, control.config.name);
         if (control.config.type === "list") {
-          control.setValue(Array.isArray(value) ? value : []);
+          control.setValue(Array.isArray(value) ? value : [], item);
         } else {
-          control.setValue(value ?? "");
+          control.setValue(value ?? "", item);
         }
         control.clearError();
       });
@@ -879,9 +945,9 @@ function createDocumentForm({
     controls.forEach((control) => {
       const value = getNestedValue(latestData, control.config.name);
       if (control.config.type === "list") {
-        control.setValue(Array.isArray(value) ? value : []);
+        control.setValue(Array.isArray(value) ? value : [], latestData);
       } else {
-        control.setValue(value ?? "");
+        control.setValue(value ?? "", latestData);
       }
       control.clearError();
     });
@@ -900,7 +966,11 @@ function createDocumentForm({
     submitButton.disabled = value;
     resetButton.disabled = value;
     controls.forEach((control) => {
-      control.input.disabled = value;
+      if (typeof control.setDisabled === "function") {
+        control.setDisabled(value);
+      } else if (control.input) {
+        control.input.disabled = value;
+      }
     });
     if (value) {
       submitButton.dataset.originalLabel = submitButton.textContent;
@@ -936,13 +1006,27 @@ function createFieldControl(config) {
   label.textContent = config.label || config.name;
   field.appendChild(label);
 
-  let input;
   const type = config.type || "text";
+  let input;
+  let fileInput = null;
+  let uploadButton = null;
+  let progressBar = null;
+  let uploadStatus = null;
+  let previewContainer = null;
+  let previewImage = null;
+  let lastUploadedUrl = "";
+  let currentStoragePath = "";
+  let isUploading = false;
+  let externalDisabled = false;
+
   if (type === "textarea" || type === "html" || type === "list") {
     input = document.createElement("textarea");
     if (config.rows) {
       input.rows = config.rows;
     }
+  } else if (type === "image") {
+    input = document.createElement("input");
+    input.type = "url";
   } else {
     input = document.createElement("input");
     if (type === "number") {
@@ -970,11 +1054,60 @@ function createFieldControl(config) {
   input.id = fieldId;
   if (config.placeholder) {
     input.placeholder = config.placeholder;
+  } else if (type === "image") {
+    input.placeholder = "https://example.com/image.jpg";
   }
   if (config.autocomplete) {
     input.autocomplete = config.autocomplete;
   }
   field.appendChild(input);
+
+  if (type === "image") {
+    field.classList.add("image-field");
+
+    previewContainer = document.createElement("div");
+    previewContainer.className = "image-preview";
+    previewContainer.hidden = true;
+    previewImage = document.createElement("img");
+    previewImage.alt = config.label || "Selected image";
+    previewContainer.appendChild(previewImage);
+
+    const actions = document.createElement("div");
+    actions.className = "upload-actions";
+
+    fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = config.accept || "image/*";
+    fileInput.id = `${fieldId}-file`;
+    fileInput.style.display = "none";
+
+    uploadButton = document.createElement("button");
+    uploadButton.type = "button";
+    uploadButton.className = "secondary-btn";
+    uploadButton.textContent = "Upload from computer";
+    uploadButton.addEventListener("click", () => {
+      if (!input.disabled) {
+        fileInput.click();
+      }
+    });
+
+    actions.append(uploadButton, fileInput);
+
+    progressBar = document.createElement("progress");
+    progressBar.className = "upload-progress";
+    progressBar.max = 100;
+    progressBar.value = 0;
+    progressBar.hidden = true;
+
+    uploadStatus = document.createElement("p");
+    uploadStatus.className = "helper-text upload-status";
+    uploadStatus.textContent = "";
+
+    field.append(previewContainer, actions, progressBar, uploadStatus);
+
+    fileInput.addEventListener("change", handleFileSelection);
+    input.addEventListener("input", handleManualUrlChange);
+  }
 
   if (config.helper) {
     const helper = document.createElement("p");
@@ -995,7 +1128,138 @@ function createFieldControl(config) {
     error.textContent = "";
   }
 
-  function setValue(value) {
+  function updateDisabledState() {
+    if (type !== "image") {
+      return;
+    }
+    const disabled = externalDisabled || isUploading;
+    input.disabled = disabled;
+    if (uploadButton) {
+      uploadButton.disabled = disabled;
+    }
+    if (fileInput) {
+      fileInput.disabled = disabled;
+    }
+  }
+
+  function setDisabled(disabled) {
+    if (type === "image") {
+      externalDisabled = Boolean(disabled);
+      updateDisabledState();
+    } else if (input) {
+      input.disabled = Boolean(disabled);
+    }
+  }
+
+  function setPreview(url) {
+    if (type !== "image" || !previewContainer || !previewImage) {
+      return;
+    }
+    if (url) {
+      previewImage.src = url;
+      previewContainer.hidden = false;
+    } else {
+      previewImage.src = "";
+      previewContainer.hidden = true;
+    }
+  }
+
+  function handleManualUrlChange() {
+    const trimmed = input.value.trim();
+    if (!trimmed) {
+      currentStoragePath = "";
+      lastUploadedUrl = "";
+    } else if (trimmed !== lastUploadedUrl) {
+      currentStoragePath = "";
+    }
+    setPreview(trimmed);
+    setError("");
+    if (uploadStatus) {
+      uploadStatus.textContent = "";
+    }
+  }
+
+  async function handleFileSelection(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    if (config.maxFileSize && file.size > config.maxFileSize) {
+      const maxSizeMb = Math.round((config.maxFileSize / (1024 * 1024)) * 10) / 10;
+      setError(`File is too large. Maximum size is ${maxSizeMb} MB.`);
+      if (uploadStatus) {
+        uploadStatus.textContent = `Upload cancelled. File exceeds ${maxSizeMb} MB.`;
+      }
+      fileInput.value = "";
+      return;
+    }
+
+    const previousPath = currentStoragePath;
+    if (uploadStatus) {
+      uploadStatus.textContent = "Uploading...";
+    }
+    if (progressBar) {
+      progressBar.hidden = false;
+      progressBar.value = 0;
+    }
+    isUploading = true;
+    updateDisabledState();
+
+    try {
+      const directory =
+        typeof config.storageFolder === "function"
+          ? config.storageFolder()
+          : config.storageFolder || "uploads";
+      const { downloadURL, storagePath } = await uploadFileToStorage({
+        file,
+        directory,
+        onProgress: (progress) => {
+          if (progressBar) {
+            progressBar.hidden = false;
+            progressBar.value = progress;
+          }
+          if (uploadStatus) {
+            uploadStatus.textContent = `Uploading... ${progress}%`;
+          }
+        }
+      });
+
+      input.value = downloadURL;
+      lastUploadedUrl = downloadURL;
+      currentStoragePath = storagePath;
+      setPreview(downloadURL);
+      if (uploadStatus) {
+        uploadStatus.textContent = "Upload complete.";
+      }
+      if (previousPath && previousPath !== storagePath && config.deletePreviousOnReplace !== false) {
+        try {
+          await deleteStorageObject(previousPath);
+        } catch (error) {
+          console.warn("Failed to remove previous file", error);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      const message = error?.message || "Unable to upload file.";
+      setError(message);
+      if (uploadStatus) {
+        uploadStatus.textContent = message;
+      }
+    } finally {
+      isUploading = false;
+      if (progressBar) {
+        progressBar.hidden = true;
+        progressBar.value = 0;
+      }
+      updateDisabledState();
+      if (fileInput) {
+        fileInput.value = "";
+      }
+    }
+  }
+
+  function setValue(value, context = {}) {
     if (type === "list") {
       input.value = Array.isArray(value) ? value.join("\n") : value || "";
       return;
@@ -1008,7 +1272,38 @@ function createFieldControl(config) {
       input.value = value === null || value === undefined ? "" : String(value);
       return;
     }
+    if (type === "image") {
+      const stringValue = value === null || value === undefined ? "" : String(value);
+      input.value = stringValue;
+      const storedPath = config.storagePathField ? getNestedValue(context, config.storagePathField) : "";
+      currentStoragePath = storedPath || "";
+      lastUploadedUrl = storedPath ? stringValue : "";
+      setPreview(stringValue);
+      if (uploadStatus) {
+        uploadStatus.textContent = "";
+      }
+      if (progressBar) {
+        progressBar.hidden = true;
+        progressBar.value = 0;
+      }
+      updateDisabledState();
+      return;
+    }
     input.value = value === null || value === undefined ? "" : String(value);
+  }
+
+  function getImageValue() {
+    const trimmed = input.value.trim();
+    if (!trimmed) {
+      currentStoragePath = "";
+      lastUploadedUrl = "";
+      setPreview("");
+    }
+    const extraValues = [];
+    if (config.storagePathField) {
+      extraValues.push({ path: config.storagePathField, value: currentStoragePath || null });
+    }
+    return { value: trimmed, extraValues };
   }
 
   return {
@@ -1017,7 +1312,9 @@ function createFieldControl(config) {
     config,
     setError,
     clearError,
-    setValue
+    setValue,
+    setDisabled,
+    getValue: type === "image" ? getImageValue : undefined
   };
 }
 
@@ -1027,7 +1324,8 @@ function collectFieldValues(controls) {
 
   controls.forEach((control) => {
     control.clearError();
-    const { value, error } = parseControlValue(control);
+    const result = typeof control.getValue === "function" ? control.getValue() : parseControlValue(control);
+    const { value, error, extraValues } = result || {};
     if (error) {
       control.setError(error);
       errors.push(error);
@@ -1040,6 +1338,14 @@ function collectFieldValues(controls) {
       return;
     }
     setNestedValue(values, control.config.name, value);
+    if (Array.isArray(extraValues)) {
+      extraValues.forEach((extra) => {
+        if (!extra || typeof extra.path !== "string") {
+          return;
+        }
+        setNestedValue(values, extra.path, extra.value);
+      });
+    }
   });
 
   return { values, errors };

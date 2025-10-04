@@ -22,7 +22,13 @@ import {
   limit,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
 const injectedConfig = window.__FIREBASE_CONFIG__;
 
@@ -68,6 +74,15 @@ function ensureFirestore() {
     );
   }
   return firestore;
+}
+
+function ensureStorage() {
+  if (!storage) {
+    throw new Error(
+      "Firebase Storage is not initialized. Ensure firebase-config.js sets window.__FIREBASE_CONFIG__ before loading admin scripts."
+    );
+  }
+  return storage;
 }
 
 export function watchAuthState(callback) {
@@ -195,5 +210,62 @@ export function subscribeToDocument(path, callback) {
       callback(null);
     }
   });
+}
+
+export function uploadFileToStorage({ file, directory = "uploads", onProgress } = {}) {
+  if (!file || !(file instanceof File)) {
+    throw new Error("A valid File object is required to upload to storage.");
+  }
+
+  const storageInstance = ensureStorage();
+  const cleanDirectory = (directory || "uploads").replace(/(^\/+|\/+?$)/g, "");
+  const safeDirectory = cleanDirectory.length ? cleanDirectory : "uploads";
+  const extensionPart = file.name && file.name.includes(".") ? file.name.split(".").pop() : "";
+  const sanitisedExtension = extensionPart
+    ? `.${extensionPart.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}`
+    : "";
+  const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const storagePath = `${safeDirectory}/${uniqueId}${sanitisedExtension}`;
+  const storageRef = ref(storageInstance, storagePath);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        if (typeof onProgress === "function" && snapshot.totalBytes) {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          onProgress(progress);
+        }
+      },
+      (error) => {
+        reject(error);
+      },
+      async () => {
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve({ downloadURL, storagePath });
+        } catch (error) {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+export async function deleteStorageObject(storagePath) {
+  if (!storagePath) {
+    return;
+  }
+  try {
+    const storageInstance = ensureStorage();
+    const storageRef = ref(storageInstance, storagePath);
+    await deleteObject(storageRef);
+  } catch (error) {
+    if (error?.code === "storage/object-not-found") {
+      return;
+    }
+    throw error;
+  }
 }
 
