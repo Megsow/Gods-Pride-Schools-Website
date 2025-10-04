@@ -53,6 +53,10 @@ Consult [`docs/content-audit.md`](docs/content-audit.md) for a full matrix of pa
   - Fields: `quote`, `author`, optional `publishedAt`, `priority`
 - `news` (collection)
   - Fields: `title`, `summary`, `body`, `image.url`, `publishedAt`, `link`
+- `content/parentsCorner` (document)
+  - `heading`, `intro`
+- `content/parentsCorner/cards` (collection)
+  - Fields: `title`, `items` (array of bullet strings), optional `order`
 - `media/homeCarousel` & `media/gallery` (collections)
   - Fields: `url`, `alt`, optional `caption`, `description`, `order`
 - Page-specific documents under `content/`

@@ -10,6 +10,8 @@ The table below documents every dynamic binding in the site and the Firestore lo
 | Home | Carousel | `media/homeCarousel` collection | Ordered by `order`; each item exposes `image.url`, `caption`, `description`. |
 | Home | Announcements list | `announcements` collection | Ordered by `publishedAt desc`, limited to three cards. |
 | Home | Testimonials slider | `testimonials` collection | Ordered by `priority desc`, limited to six entries. |
+| Home | Parents' Corner heading & intro | `content/parentsCorner` | Fields `heading` and `intro`. |
+| Home | Parents' Corner cards | `content/parentsCorner/cards` collection | Ordered by optional `order`; each document stores `title` and `items` list. |
 | About | Proprietor profile, mandate, vision, mission, values, entrepreneurship | `content/about` | Individual fields (`owner.*`, `mandate.*`, `vision.*`, `mission.*`, `values.*`, `entrepreneurship.*`). |
 | Admissions | Hero copy & step cards | `content/admissions` | `hero.title`, `hero.intro`, and `steps` (HTML list). |
 | Contact | Page heading & intro | `content/contact` | `heading` and `intro`. |
