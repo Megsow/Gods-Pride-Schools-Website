@@ -125,3 +125,23 @@ export function renderCarouselIndicator(index, { active } = {}) {
   }
   return li;
 }
+
+export function renderParentsCornerCard(item) {
+  const card = createElement('div', 'parents-card');
+  if (item.title) {
+    card.appendChild(createElement('h3', null, { text: item.title }));
+  }
+
+  const bullets = Array.isArray(item.items) ? item.items : [];
+  if (bullets.length) {
+    const list = document.createElement('ul');
+    bullets.forEach((entry) => {
+      const li = document.createElement('li');
+      li.textContent = entry;
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+  }
+
+  return card;
+}

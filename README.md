@@ -41,6 +41,7 @@ Consult [`docs/content-audit.md`](docs/content-audit.md) for a full matrix of pa
 
 - `settings/global` (document)
   - `siteName`, `tagline`, `logos.left.url`, `logos.right.url`
+  - Optional `logos.left.storagePath`/`logos.right.storagePath` track uploaded assets in Firebase Storage.
   - `contact.email`, `contact.phone`, `address`
   - `social.facebook`, `social.instagram`
   - `footer.copyright`
@@ -49,12 +50,19 @@ Consult [`docs/content-audit.md`](docs/content-audit.md) for a full matrix of pa
   - `announcements.heading`, `testimonials.heading`
 - `announcements` (collection)
   - Fields: `title`, `summary`, `body` (HTML), `image.url`, `image.alt`, `publishedAt`, optional `priority`
+  - Optional `image.storagePath` references the uploaded image in Firebase Storage.
 - `testimonials` (collection)
   - Fields: `quote`, `author`, optional `publishedAt`, `priority`
 - `news` (collection)
   - Fields: `title`, `summary`, `body`, `image.url`, `publishedAt`, `link`
+  - Optional `image.storagePath` references the uploaded image in Firebase Storage.
+- `content/parentsCorner` (document)
+  - `heading`, `intro`
+- `content/parentsCorner/cards` (collection)
+  - Fields: `title`, `items` (array of bullet strings), optional `order`
 - `media/homeCarousel` & `media/gallery` (collections)
   - Fields: `url`, `alt`, optional `caption`, `description`, `order`
+  - Optional `storagePath` references the uploaded asset in Firebase Storage.
 - Page-specific documents under `content/`
   - `content/about`, `content/admissions`, `content/contact`, `content/news`, `content/gallery`
   - `content/schools`, `content/nurseryPrimary`, `content/secondary`
@@ -63,7 +71,7 @@ Consult [`docs/content-audit.md`](docs/content-audit.md) for a full matrix of pa
 
 1. **Plan the update** – Identify the section you want to change and look up its Firestore path in [`docs/content-audit.md`](docs/content-audit.md).
 2. **Edit Firestore content** – Use the Firebase console (or an admin tool) to update the document/collection values. Rich text fields accept HTML, which will be inserted directly into the page.
-3. **Upload media** – Host images in Firebase Storage (or elsewhere) and store the public download URL in the relevant document (`media/*` collections, `image.url` fields). Include `caption`/`alt` text for accessibility.
+3. **Upload media** – The admin dashboard now lets you upload images directly from your computer. Files are stored in Firebase Storage and the form automatically writes the download URL (and storage path) into Firestore. You can still paste an external URL if preferred. Include `caption`/`alt` text for accessibility.
 4. **Save and publish** – Changes go live immediately because the site reads directly from Firestore on each page load. The helper caches responses for five minutes; edits propagate across visitors after that cache window or when a user refreshes.
 5. **Fallback awareness** – If a field is missing or Firestore is unavailable, the site reverts to the original static copy committed in this repo. Keep those fallbacks reasonably up to date for resilience.
 

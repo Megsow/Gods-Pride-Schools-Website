@@ -2,11 +2,307 @@ import {
   deleteDocument,
   saveDocument,
   subscribeToCollection,
-  signOutUser
+  subscribeToDocument,
+  signOutUser,
+  uploadFileToStorage,
+  deleteStorageObject
 } from "../../firebase/config.js";
-
+import { getNestedValue } from "../../utils/object.js";
 import { createRouter } from "../router.js";
 
+const ANNOUNCEMENT_FIELDS = [
+  { name: "title", label: "Title", required: true, placeholder: "Admissions now open" },
+  {
+    name: "summary",
+    label: "Summary",
+    type: "textarea",
+    required: true,
+    placeholder: "Short teaser shown above the Read More link."
+  },
+  {
+    name: "body",
+    label: "Body (HTML allowed)",
+    type: "html",
+    required: true,
+    placeholder: "<p>Full announcement details...</p>",
+    trim: false
+  },
+  {
+    name: "image.url",
+    label: "Image",
+    type: "image",
+    storageFolder: "announcements",
+    storagePathField: "image.storagePath",
+    accept: "image/*",
+    helper: "Upload a featured image or paste an existing URL.",
+    maxFileSize: 5 * 1024 * 1024
+  },
+  { name: "image.alt", label: "Image alt text", placeholder: "Students celebrating" },
+  {
+    name: "publishedAt",
+    label: "Published at",
+    type: "datetime",
+    required: true,
+    helper: "Controls sorting; newest announcements appear first."
+  },
+  {
+    name: "priority",
+    label: "Priority",
+    type: "number",
+    helper: "Higher numbers appear before others when dates match."
+  }
+];
+
+const TESTIMONIAL_FIELDS = [
+  {
+    name: "quote",
+    label: "Quote",
+    type: "textarea",
+    required: true,
+    placeholder: "\"Our children love...\"",
+    trim: false
+  },
+  { name: "author", label: "Author", required: true, placeholder: "Mrs. Adeoye, Parent" },
+  {
+    name: "priority",
+    label: "Priority",
+    type: "number",
+    helper: "Higher numbers appear first in the carousel."
+  }
+];
+
+const NEWS_FIELDS = [
+  { name: "title", label: "Title", required: true, placeholder: "STEM fair dazzles community" },
+  {
+    name: "summary",
+    label: "Summary",
+    type: "textarea",
+    required: true,
+    placeholder: "Short overview shown on the card."
+  },
+  {
+    name: "body",
+    label: "Body (HTML allowed)",
+    type: "html",
+    placeholder: "<p>Full article content...</p>",
+    trim: false
+  },
+  { name: "link", label: "External link", type: "url", placeholder: "https://example.com/full-story" },
+  {
+    name: "image.url",
+    label: "Image",
+    type: "image",
+    storageFolder: "news",
+    storagePathField: "image.storagePath",
+    accept: "image/*",
+    helper: "Upload a cover image or paste an existing URL.",
+    maxFileSize: 5 * 1024 * 1024
+  },
+  { name: "image.alt", label: "Image alt text", placeholder: "Students receiving awards" },
+  {
+    name: "publishedAt",
+    label: "Published at",
+    type: "datetime",
+    required: true,
+    helper: "Controls ordering; newest items appear first."
+  }
+];
+
+const CAROUSEL_FIELDS = [
+  {
+    name: "url",
+    label: "Image",
+    type: "image",
+    required: true,
+    storageFolder: "media/home-carousel",
+    storagePathField: "storagePath",
+    accept: "image/*",
+    helper: "Upload the slide image or paste an existing URL.",
+    maxFileSize: 6 * 1024 * 1024
+  },
+  { name: "alt", label: "Alt text", required: true, placeholder: "Students celebrating" },
+  { name: "caption", label: "Caption", placeholder: "Graduation day" },
+  { name: "description", label: "Description", type: "textarea", placeholder: "Optional supporting text." },
+  {
+    name: "order",
+    label: "Display order",
+    type: "number",
+    helper: "Lower numbers appear first in the carousel."
+  }
+];
+
+const GALLERY_FIELDS = [
+  {
+    name: "url",
+    label: "Image",
+    type: "image",
+    required: true,
+    storageFolder: "media/gallery",
+    storagePathField: "storagePath",
+    accept: "image/*",
+    helper: "Upload a gallery image or paste an existing URL.",
+    maxFileSize: 6 * 1024 * 1024
+  },
+  { name: "alt", label: "Alt text", required: true, placeholder: "Students in robotics lab" },
+  { name: "caption", label: "Caption", placeholder: "Robotics" },
+  {
+    name: "order",
+    label: "Display order",
+    type: "number",
+    helper: "Lower numbers appear earlier in the gallery."
+  }
+];
+
+const PARENTS_CARD_FIELDS = [
+  { name: "title", label: "Title", required: true, placeholder: "Stay Connected" },
+  {
+    name: "items",
+    label: "Bullet points",
+    type: "list",
+    required: true,
+    helper: "Enter one item per line."
+  },
+  {
+    name: "order",
+    label: "Display order",
+    type: "number",
+    helper: "Lower numbers appear first."
+  }
+];
+
+const SECTION_DEFINITIONS = [
+  {
+    id: "settings",
+    label: "Site settings",
+    create: (statusArea) => createSettingsSection(statusArea)
+  },
+  {
+    id: "announcements",
+    label: "Announcements",
+    create: (statusArea) =>
+      createCollectionSection({
+        id: "announcements",
+        title: "Latest announcements",
+        description:
+          "Publish and manage the announcement cards that appear on the home and news pages.",
+        collectionPath: "announcements",
+        orderBy: [["publishedAt", "desc"]],
+        statusArea,
+        formTitle: "Create or edit announcement",
+        submitLabel: "Save announcement",
+        updateLabel: "Update announcement",
+        successMessage: "Announcement saved successfully.",
+        deleteSuccessMessage: "Announcement deleted.",
+        deleteConfirmation: "Delete this announcement?",
+        emptyState: "No announcements have been published yet.",
+        fields: ANNOUNCEMENT_FIELDS,
+        listTitle: (item) => item.title || item.id,
+        listSubtitle: (item) => item.summary,
+        listMeta: (item) => formatDisplayDate(item.publishedAt)
+      })
+  },
+  {
+    id: "testimonials",
+    label: "Testimonials",
+    create: (statusArea) =>
+      createCollectionSection({
+        id: "testimonials",
+        title: "Testimonials",
+        description:
+          "Update the quotes showcased in the \"What Our Students and Parents Say\" carousel.",
+        collectionPath: "testimonials",
+        orderBy: [["priority", "desc"]],
+        statusArea,
+        formTitle: "Create or edit testimonial",
+        submitLabel: "Save testimonial",
+        updateLabel: "Update testimonial",
+        successMessage: "Testimonial saved.",
+        deleteSuccessMessage: "Testimonial deleted.",
+        deleteConfirmation: "Delete this testimonial?",
+        emptyState: "No testimonials have been added yet.",
+        fields: TESTIMONIAL_FIELDS,
+        listTitle: (item) => item.author || "Testimonial",
+        listSubtitle: (item) => item.quote
+      })
+  },
+  {
+    id: "parents",
+    label: "Parents' Corner",
+    create: (statusArea) => createParentsCornerSection(statusArea)
+  },
+  {
+    id: "news",
+    label: "News",
+    create: (statusArea) =>
+      createCollectionSection({
+        id: "news",
+        title: "News articles",
+        description: "Manage news stories displayed on the News page under Latest News.",
+        collectionPath: "news",
+        orderBy: [["publishedAt", "desc"]],
+        statusArea,
+        formTitle: "Create or edit news story",
+        submitLabel: "Save news story",
+        updateLabel: "Update news story",
+        successMessage: "News story saved.",
+        deleteSuccessMessage: "News story deleted.",
+        deleteConfirmation: "Delete this news story?",
+        emptyState: "No news stories have been created yet.",
+        fields: NEWS_FIELDS,
+        listTitle: (item) => item.title || item.id,
+        listSubtitle: (item) => item.summary,
+        listMeta: (item) => formatDisplayDate(item.publishedAt)
+      })
+  },
+  {
+    id: "carousel",
+    label: "Homepage carousel",
+    create: (statusArea) =>
+      createCollectionSection({
+        id: "home-carousel",
+        title: "Homepage carousel",
+        description: "Set the images and captions that rotate in the homepage hero carousel.",
+        collectionPath: "media/homeCarousel",
+        orderBy: [["order", "asc"]],
+        statusArea,
+        formTitle: "Create or edit carousel slide",
+        submitLabel: "Save slide",
+        updateLabel: "Update slide",
+        successMessage: "Carousel slide saved.",
+        deleteSuccessMessage: "Carousel slide deleted.",
+        deleteConfirmation: "Delete this carousel slide?",
+        emptyState: "No carousel slides have been uploaded yet.",
+        fields: CAROUSEL_FIELDS,
+        listTitle: (item) => item.caption || item.alt || item.url,
+        listSubtitle: (item) => item.description,
+        listMeta: (item) => (item.order !== undefined && item.order !== null ? `Order ${item.order}` : "")
+      })
+  },
+  {
+    id: "gallery",
+    label: "Gallery",
+    create: (statusArea) =>
+      createCollectionSection({
+        id: "media-gallery",
+        title: "Media gallery",
+        description: "Manage the photos shown on the gallery and homepage media grids.",
+        collectionPath: "media/gallery",
+        orderBy: [["order", "asc"]],
+        statusArea,
+        formTitle: "Create or edit gallery image",
+        submitLabel: "Save image",
+        updateLabel: "Update image",
+        successMessage: "Gallery image saved.",
+        deleteSuccessMessage: "Gallery image deleted.",
+        deleteConfirmation: "Delete this gallery image?",
+        emptyState: "No gallery images have been added yet.",
+        fields: GALLERY_FIELDS,
+        listTitle: (item) => item.caption || item.alt || item.url,
+        listSubtitle: (item) => item.url,
+        listMeta: (item) => (item.order !== undefined && item.order !== null ? `Order ${item.order}` : "")
+      })
+  }
+];
 export function renderDashboardView(root, { user }) {
   root.innerHTML = "";
 
@@ -34,15 +330,9 @@ export function renderDashboardView(root, { user }) {
   const nav = document.createElement("div");
   nav.className = "admin-nav";
 
-  const copyTab = createTabButton("Site copy", "copy");
-  const mediaTab = createTabButton("Images", "images");
-
-  nav.append(copyTab, mediaTab);
-
   const signOutButton = document.createElement("button");
   signOutButton.className = "secondary-btn";
   signOutButton.textContent = "Sign out";
-
   signOutButton.addEventListener("click", () => {
     signOutUser();
   });
@@ -55,50 +345,56 @@ export function renderDashboardView(root, { user }) {
   const content = document.createElement("div");
   content.className = "admin-content";
 
-  const copySection = createCopySection(statusArea);
-  const imageSection = createImageSection(statusArea);
-
-  content.append(copySection.section, imageSection.section);
-
   card.append(header, statusArea, content);
   shell.append(card);
   root.append(shell);
 
+  const sectionsConfig = SECTION_DEFINITIONS.map((definition) => ({
+    id: definition.id,
+    label: definition.label,
+    factory: () => definition.create(statusArea)
+  }));
+
+  const buttons = new Map();
+  const sections = new Map();
+
   const router = createRouter({
+    defaultRoute: sectionsConfig[0]?.id || "settings",
     onRouteChange: (route) => {
-      setActiveRoute(route);
+      setActiveRoute(route || sectionsConfig[0]?.id || "settings");
     }
   });
 
-  let copyUnsubscribe = null;
-  let imageUnsubscribe = null;
+  sectionsConfig.forEach((config) => {
+    const button = createTabButton(config.label, config.id);
+    buttons.set(config.id, button);
+    nav.appendChild(button);
+
+    const instance = config.factory();
+    instance.section.style.display = "none";
+    sections.set(config.id, instance);
+    content.appendChild(instance.section);
+
+    button.addEventListener("click", () => {
+      router.navigate(config.id);
+    });
+  });
 
   function setActiveRoute(route) {
-    if (route === "images") {
-      copySection.section.style.display = "none";
-      imageSection.section.style.display = "block";
-      copyTab.classList.remove("active");
-      mediaTab.classList.add("active");
-      if (!imageUnsubscribe) {
-        imageUnsubscribe = subscribeToCollection("imageMetadata", (items) => {
-          imageSection.renderList(items);
-        });
+    sections.forEach((instance, id) => {
+      const isActive = id === route;
+      instance.section.style.display = isActive ? "block" : "none";
+      const button = buttons.get(id);
+      if (button) {
+        button.classList.toggle("active", isActive);
       }
-    } else {
-      copySection.section.style.display = "block";
-      imageSection.section.style.display = "none";
-      copyTab.classList.add("active");
-      mediaTab.classList.remove("active");
-      if (!copyUnsubscribe) {
-        copyUnsubscribe = subscribeToCollection("siteCopy", (items) => {
-          copySection.renderList(items);
-        });
+      if (isActive) {
+        instance.activate?.();
+      } else {
+        instance.deactivate?.();
       }
-    }
+    });
   }
-
-  copyTab.addEventListener("click", () => router.navigate("copy"));
-  mediaTab.addEventListener("click", () => router.navigate("images"));
 
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -113,11 +409,1092 @@ export function renderDashboardView(root, { user }) {
   function cleanup() {
     observer.disconnect();
     router.teardown();
-    copyUnsubscribe?.();
-    imageUnsubscribe?.();
+    sections.forEach((instance) => {
+      instance.cleanup?.();
+    });
   }
 
   return cleanup;
+}
+function createSettingsSection(statusArea) {
+  const container = document.createElement("div");
+  container.className = "section-stack";
+  container.id = "settings-section";
+
+  const globalCard = document.createElement("section");
+  globalCard.className = "section-card";
+  const globalHeading = document.createElement("h2");
+  globalHeading.textContent = "Global branding";
+  const globalDescription = document.createElement("p");
+  globalDescription.className = "helper-text";
+  globalDescription.textContent =
+    "Update the school name, logos, contact information, and footer details shown across every page.";
+
+  const globalForm = createDocumentForm({
+    statusArea,
+    collection: "settings",
+    docId: "global",
+    formTitle: "Save global settings",
+    successMessage: "Global settings saved.",
+    fields: [
+      { name: "siteName", label: "Site name", required: true, placeholder: "GOD'S PRIDE GROUP OF SCHOOLS" },
+      {
+        name: "tagline",
+        label: "Tagline",
+        required: true,
+        placeholder: "Building Spiritual, Moral and Academic Excellence on a Firm Foundation"
+      },
+      {
+        name: "logos.left.url",
+        label: "Left logo",
+        type: "image",
+        storageFolder: "settings/logos",
+        storagePathField: "logos.left.storagePath",
+        accept: "image/*",
+        helper: "Upload the header's left logo or paste a URL.",
+        maxFileSize: 4 * 1024 * 1024
+      },
+      {
+        name: "logos.right.url",
+        label: "Right logo",
+        type: "image",
+        storageFolder: "settings/logos",
+        storagePathField: "logos.right.storagePath",
+        accept: "image/*",
+        helper: "Upload the header's right logo or paste a URL.",
+        maxFileSize: 4 * 1024 * 1024
+      },
+      { name: "contact.email", label: "Contact email", type: "email", placeholder: "info@example.com" },
+      { name: "contact.phone", label: "Contact phone", placeholder: "+234-..." },
+      { name: "address", label: "Address", type: "textarea", required: true, placeholder: "Street, City, State." },
+      { name: "social.facebook", label: "Facebook URL", type: "url", placeholder: "https://facebook.com/..." },
+      { name: "social.instagram", label: "Instagram URL", type: "url", placeholder: "https://instagram.com/..." },
+      { name: "footer.copyright", label: "Footer copyright", placeholder: "© 2025 God's Pride Schools" }
+    ]
+  });
+
+  globalCard.append(globalHeading, globalDescription, globalForm.formElement);
+  container.appendChild(globalCard);
+
+  const homepageCard = document.createElement("section");
+  homepageCard.className = "section-card";
+  const homepageHeading = document.createElement("h2");
+  homepageHeading.textContent = "Homepage headings";
+  const homepageDescription = document.createElement("p");
+  homepageDescription.className = "helper-text";
+  homepageDescription.textContent =
+    "Control the hero text, marquee, and section headings used on the homepage.";
+
+  const homepageForm = createDocumentForm({
+    statusArea,
+    collection: "settings",
+    docId: "homepage",
+    formTitle: "Save homepage headings",
+    successMessage: "Homepage headings saved.",
+    fields: [
+      { name: "intro.title", label: "Intro title", required: true, placeholder: "God's Pride Group of Schools" },
+      { name: "intro.marquee", label: "Scrolling marquee", required: true, placeholder: "The Home Of Godly Global Champions" },
+      { name: "announcements.heading", label: "Announcements heading", required: true, placeholder: "Latest Announcements" },
+      {
+        name: "testimonials.heading",
+        label: "Testimonials heading",
+        required: true,
+        placeholder: "What Our Students and Parents Say"
+      }
+    ]
+  });
+
+  homepageCard.append(homepageHeading, homepageDescription, homepageForm.formElement);
+  container.appendChild(homepageCard);
+
+  return {
+    section: container,
+    activate() {
+      globalForm.activate();
+      homepageForm.activate();
+    },
+    deactivate() {},
+    cleanup() {
+      globalForm.cleanup?.();
+      homepageForm.cleanup?.();
+    }
+  };
+}
+
+function createParentsCornerSection(statusArea) {
+  const container = document.createElement("div");
+  container.className = "section-stack";
+  container.id = "parents-section";
+
+  const copyCard = document.createElement("section");
+  copyCard.className = "section-card";
+  const copyHeading = document.createElement("h2");
+  copyHeading.textContent = "Parents' Corner copy";
+  const copyDescription = document.createElement("p");
+  copyDescription.className = "helper-text";
+  copyDescription.textContent =
+    "Edit the heading and introduction paragraph that appear above the Parents' Corner grid.";
+
+  const copyForm = createDocumentForm({
+    statusArea,
+    collection: "content",
+    docId: "parentsCorner",
+    formTitle: "Save Parents' Corner copy",
+    successMessage: "Parents' Corner introduction saved.",
+    fields: [
+      { name: "heading", label: "Section heading", required: true, placeholder: "Parents' Corner" },
+      {
+        name: "intro",
+        label: "Introductory text",
+        type: "textarea",
+        required: true,
+        placeholder: "We deeply value our parents..."
+      }
+    ]
+  });
+
+  copyCard.append(copyHeading, copyDescription, copyForm.formElement);
+  container.appendChild(copyCard);
+
+  const cardsSection = createCollectionSection({
+    id: "parents-corner-cards",
+    title: "Parents' Corner cards",
+    description: "Manage the supportive cards displayed in the Parents' Corner grid on the homepage.",
+    collectionPath: "content/parentsCorner/cards",
+    orderBy: [["order", "asc"]],
+    statusArea,
+    formTitle: "Create or edit card",
+    submitLabel: "Save card",
+    updateLabel: "Update card",
+    successMessage: "Parents' Corner card saved.",
+    deleteSuccessMessage: "Parents' Corner card deleted.",
+    deleteConfirmation: "Delete this Parents' Corner card?",
+    emptyState: "No Parents' Corner cards have been created yet.",
+    fields: PARENTS_CARD_FIELDS,
+    listTitle: (item) => item.title || item.id,
+    listSubtitle: (item) => (Array.isArray(item.items) ? item.items.join(" • ") : ""),
+    listMeta: (item) => (item.order !== undefined && item.order !== null ? `Order ${item.order}` : "")
+  });
+
+  container.appendChild(cardsSection.section);
+
+  return {
+    section: container,
+    activate() {
+      copyForm.activate();
+      cardsSection.activate?.();
+    },
+    deactivate() {
+      cardsSection.deactivate?.();
+    },
+    cleanup() {
+      copyForm.cleanup?.();
+      cardsSection.cleanup?.();
+    }
+  };
+}
+function createCollectionSection({
+  id,
+  title,
+  description,
+  collectionPath,
+  orderBy,
+  statusArea,
+  formTitle,
+  submitLabel = "Save",
+  updateLabel = "Update",
+  successMessage = "Saved successfully.",
+  deleteSuccessMessage = "Entry deleted.",
+  deleteConfirmation = "Delete this entry?",
+  emptyState = "No content found yet.",
+  fields,
+  listTitle,
+  listSubtitle,
+  listMeta
+}) {
+  const section = document.createElement("section");
+  section.className = "section-card";
+  section.id = `${id}-section`;
+
+  const heading = document.createElement("h2");
+  heading.textContent = title;
+  const helper = document.createElement("p");
+  helper.className = "helper-text";
+  helper.textContent = description;
+
+  const list = document.createElement("div");
+  list.className = "list";
+
+  const formElement = document.createElement("form");
+  formElement.dataset.mode = "create";
+
+  const formHeading = document.createElement("h3");
+  formHeading.textContent = formTitle;
+
+  const controls = createFieldControls(fields || []);
+
+  const buttonRow = document.createElement("div");
+  buttonRow.className = "list-item-actions";
+  const resetButton = document.createElement("button");
+  resetButton.type = "button";
+  resetButton.className = "secondary-btn";
+  resetButton.textContent = "Reset";
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.className = "primary-btn";
+  submitButton.textContent = submitLabel;
+  buttonRow.append(resetButton, submitButton);
+
+  const message = document.createElement("div");
+  message.className = "helper-text";
+
+  formElement.append(formHeading);
+  controls.forEach((control) => {
+    formElement.appendChild(control.field);
+  });
+  formElement.append(buttonRow, message);
+
+  section.append(heading, helper, list, formElement);
+
+  let currentId = null;
+  let unsubscribe = null;
+  let isSubmitting = false;
+
+  renderList([]);
+
+  formElement.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+
+    const { values, errors } = collectFieldValues(controls);
+    if (errors.length) {
+      message.textContent = errors.join(" ");
+      message.className = "error-banner";
+      return;
+    }
+
+    const payload = { ...values };
+    if (currentId) {
+      payload.id = currentId;
+    }
+
+    isSubmitting = true;
+    setFormLoading(true);
+
+    try {
+      await saveDocument(collectionPath, payload);
+      message.textContent = successMessage;
+      message.className = "success-banner";
+      setBanner(statusArea, successMessage, "success");
+      if (!currentId) {
+        resetForm();
+      }
+      currentId = null;
+      formElement.dataset.mode = "create";
+      submitButton.textContent = submitLabel;
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.message || "Unable to save changes.";
+      message.textContent = errorMessage;
+      message.className = "error-banner";
+      setBanner(statusArea, errorMessage, "error");
+    } finally {
+      isSubmitting = false;
+      setFormLoading(false);
+    }
+  });
+
+  resetButton.addEventListener("click", () => {
+    currentId = null;
+    formElement.dataset.mode = "create";
+    submitButton.textContent = submitLabel;
+    message.textContent = "";
+    message.className = "helper-text";
+    resetForm();
+  });
+
+  function resetForm() {
+    controls.forEach((control) => {
+      control.clearError();
+      if (control.config.type === "list") {
+        control.setValue([], {});
+      } else {
+        control.setValue("", {});
+      }
+    });
+  }
+
+  function setFormLoading(value) {
+    submitButton.disabled = value;
+    resetButton.disabled = value;
+    controls.forEach((control) => {
+      if (typeof control.setDisabled === "function") {
+        control.setDisabled(value);
+      } else if (control.input) {
+        control.input.disabled = value;
+      }
+    });
+    if (value) {
+      submitButton.dataset.originalLabel = submitButton.textContent;
+      submitButton.textContent = "Saving...";
+    } else if (submitButton.dataset.originalLabel) {
+      submitButton.textContent = submitButton.dataset.originalLabel;
+      delete submitButton.dataset.originalLabel;
+    }
+  }
+
+  function renderList(items) {
+    list.innerHTML = "";
+    if (!items || !items.length) {
+      const empty = document.createElement("p");
+      empty.className = "helper-text";
+      empty.textContent = emptyState;
+      list.appendChild(empty);
+      return;
+    }
+
+    items.forEach((item) => {
+      list.appendChild(createListItem(item));
+    });
+  }
+
+  function createListItem(item) {
+    const entry = document.createElement("div");
+    entry.className = "list-item";
+
+    const titleText = listTitle ? listTitle(item) : item.title || item.caption || item.name || item.id;
+    if (titleText) {
+      const titleEl = document.createElement("strong");
+      titleEl.textContent = titleText;
+      entry.appendChild(titleEl);
+    }
+
+    const subtitleText = listSubtitle ? listSubtitle(item) : item.summary || item.description || item.quote;
+    if (subtitleText) {
+      const subtitleEl = document.createElement("p");
+      subtitleEl.textContent = subtitleText;
+      entry.appendChild(subtitleEl);
+    }
+
+    const metaText = listMeta ? listMeta(item) : "";
+    if (metaText) {
+      const metaEl = document.createElement("p");
+      metaEl.className = "helper-text";
+      metaEl.textContent = metaText;
+      entry.appendChild(metaEl);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "list-item-actions";
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "secondary-btn";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => {
+      currentId = item.id;
+      formElement.dataset.mode = "edit";
+      submitButton.textContent = updateLabel;
+      controls.forEach((control) => {
+        const value = getNestedValue(item, control.config.name);
+        if (control.config.type === "list") {
+          control.setValue(Array.isArray(value) ? value : [], item);
+        } else {
+          control.setValue(value ?? "", item);
+        }
+        control.clearError();
+      });
+      message.textContent = "Editing existing entry.";
+      message.className = "helper-text";
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "secondary-btn";
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", async () => {
+      if (!confirm(deleteConfirmation)) {
+        return;
+      }
+      try {
+        await deleteDocument(collectionPath, item.id);
+        setBanner(statusArea, deleteSuccessMessage, "success");
+      } catch (error) {
+        console.error(error);
+        const errorMessage = error?.message || "Unable to delete entry.";
+        setBanner(statusArea, errorMessage, "error");
+      }
+    });
+
+    actions.append(editButton, deleteButton);
+    entry.appendChild(actions);
+    return entry;
+  }
+
+  function ensureSubscribed() {
+    if (unsubscribe) {
+      return;
+    }
+    unsubscribe = subscribeToCollection(
+      collectionPath,
+      (items) => {
+        renderList(items);
+      },
+      { orderBy }
+    );
+  }
+
+  return {
+    section,
+    activate() {
+      ensureSubscribed();
+    },
+    deactivate() {},
+    cleanup() {
+      unsubscribe?.();
+    }
+  };
+}
+
+function createDocumentForm({
+  statusArea,
+  collection,
+  docId,
+  formTitle,
+  fields,
+  submitLabel = "Save",
+  successMessage = "Saved successfully."
+}) {
+  const formElement = document.createElement("form");
+  formElement.className = "document-form";
+
+  const heading = document.createElement("h3");
+  heading.textContent = formTitle;
+
+  const controls = createFieldControls(fields || []);
+
+  const buttonRow = document.createElement("div");
+  buttonRow.className = "list-item-actions";
+  const resetButton = document.createElement("button");
+  resetButton.type = "button";
+  resetButton.className = "secondary-btn";
+  resetButton.textContent = "Reset";
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.className = "primary-btn";
+  submitButton.textContent = submitLabel;
+  buttonRow.append(resetButton, submitButton);
+
+  const message = document.createElement("div");
+  message.className = "helper-text";
+
+  formElement.append(heading);
+  controls.forEach((control) => {
+    formElement.appendChild(control.field);
+  });
+  formElement.append(buttonRow, message);
+
+  let unsubscribe = null;
+  let isSubmitting = false;
+  let latestData = {};
+
+  formElement.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+
+    const { values, errors } = collectFieldValues(controls);
+    if (errors.length) {
+      message.textContent = errors.join(" ");
+      message.className = "error-banner";
+      return;
+    }
+
+    isSubmitting = true;
+    setLoading(true);
+
+    try {
+      await saveDocument(collection, { id: docId, ...values });
+      message.textContent = successMessage;
+      message.className = "success-banner";
+      setBanner(statusArea, successMessage, "success");
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.message || "Unable to save changes.";
+      message.textContent = errorMessage;
+      message.className = "error-banner";
+      setBanner(statusArea, errorMessage, "error");
+    } finally {
+      isSubmitting = false;
+      setLoading(false);
+    }
+  });
+
+  resetButton.addEventListener("click", () => {
+    applyData(latestData);
+    message.textContent = "";
+    message.className = "helper-text";
+  });
+
+  function applyData(data) {
+    latestData = data || {};
+    controls.forEach((control) => {
+      const value = getNestedValue(latestData, control.config.name);
+      if (control.config.type === "list") {
+        control.setValue(Array.isArray(value) ? value : [], latestData);
+      } else {
+        control.setValue(value ?? "", latestData);
+      }
+      control.clearError();
+    });
+  }
+
+  function ensureSubscribed() {
+    if (unsubscribe) {
+      return;
+    }
+    unsubscribe = subscribeToDocument(`${collection}/${docId}`, (data) => {
+      applyData(data || {});
+    });
+  }
+
+  function setLoading(value) {
+    submitButton.disabled = value;
+    resetButton.disabled = value;
+    controls.forEach((control) => {
+      if (typeof control.setDisabled === "function") {
+        control.setDisabled(value);
+      } else if (control.input) {
+        control.input.disabled = value;
+      }
+    });
+    if (value) {
+      submitButton.dataset.originalLabel = submitButton.textContent;
+      submitButton.textContent = "Saving...";
+    } else if (submitButton.dataset.originalLabel) {
+      submitButton.textContent = submitButton.dataset.originalLabel;
+      delete submitButton.dataset.originalLabel;
+    }
+  }
+
+  return {
+    formElement,
+    activate() {
+      ensureSubscribed();
+    },
+    cleanup() {
+      unsubscribe?.();
+    }
+  };
+}
+
+function createFieldControls(fieldConfigs) {
+  return fieldConfigs.map((config) => createFieldControl(config));
+}
+
+function createFieldControl(config) {
+  const field = document.createElement("div");
+  field.className = "field";
+
+  const label = document.createElement("label");
+  const fieldId = config.id || `field-${config.name.replace(/[^a-z0-9]/gi, "-")}-${Math.random().toString(36).slice(2, 7)}`;
+  label.setAttribute("for", fieldId);
+  label.textContent = config.label || config.name;
+  field.appendChild(label);
+
+  const type = config.type || "text";
+  let input;
+  let fileInput = null;
+  let uploadButton = null;
+  let progressBar = null;
+  let uploadStatus = null;
+  let previewContainer = null;
+  let previewImage = null;
+  let lastUploadedUrl = "";
+  let currentStoragePath = "";
+  let isUploading = false;
+  let externalDisabled = false;
+
+  if (type === "textarea" || type === "html" || type === "list") {
+    input = document.createElement("textarea");
+    if (config.rows) {
+      input.rows = config.rows;
+    }
+  } else if (type === "image") {
+    input = document.createElement("input");
+    input.type = "url";
+  } else {
+    input = document.createElement("input");
+    if (type === "number") {
+      input.type = "number";
+    } else if (type === "datetime") {
+      input.type = "datetime-local";
+    } else if (type === "email") {
+      input.type = "email";
+    } else if (type === "url") {
+      input.type = "url";
+    } else {
+      input.type = "text";
+    }
+    if (config.step !== undefined) {
+      input.step = String(config.step);
+    }
+    if (config.min !== undefined) {
+      input.min = String(config.min);
+    }
+    if (config.max !== undefined) {
+      input.max = String(config.max);
+    }
+  }
+
+  input.id = fieldId;
+  if (config.placeholder) {
+    input.placeholder = config.placeholder;
+  } else if (type === "image") {
+    input.placeholder = "https://example.com/image.jpg";
+  }
+  if (config.autocomplete) {
+    input.autocomplete = config.autocomplete;
+  }
+  field.appendChild(input);
+
+  if (type === "image") {
+    field.classList.add("image-field");
+
+    previewContainer = document.createElement("div");
+    previewContainer.className = "image-preview";
+    previewContainer.hidden = true;
+    previewImage = document.createElement("img");
+    previewImage.alt = config.label || "Selected image";
+    previewContainer.appendChild(previewImage);
+
+    const actions = document.createElement("div");
+    actions.className = "upload-actions";
+
+    fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = config.accept || "image/*";
+    fileInput.id = `${fieldId}-file`;
+    fileInput.style.display = "none";
+
+    uploadButton = document.createElement("button");
+    uploadButton.type = "button";
+    uploadButton.className = "secondary-btn";
+    uploadButton.textContent = "Upload from computer";
+    uploadButton.addEventListener("click", () => {
+      if (!input.disabled) {
+        fileInput.click();
+      }
+    });
+
+    actions.append(uploadButton, fileInput);
+
+    progressBar = document.createElement("progress");
+    progressBar.className = "upload-progress";
+    progressBar.max = 100;
+    progressBar.value = 0;
+    progressBar.hidden = true;
+
+    uploadStatus = document.createElement("p");
+    uploadStatus.className = "helper-text upload-status";
+    uploadStatus.textContent = "";
+
+    field.append(previewContainer, actions, progressBar, uploadStatus);
+
+    fileInput.addEventListener("change", handleFileSelection);
+    input.addEventListener("input", handleManualUrlChange);
+  }
+
+  if (config.helper) {
+    const helper = document.createElement("p");
+    helper.className = "helper-text";
+    helper.textContent = config.helper;
+    field.appendChild(helper);
+  }
+
+  const error = document.createElement("div");
+  error.className = "validation-error";
+  field.appendChild(error);
+
+  function setError(message) {
+    error.textContent = message || "";
+  }
+
+  function clearError() {
+    error.textContent = "";
+  }
+
+  function updateDisabledState() {
+    if (type !== "image") {
+      return;
+    }
+    const disabled = externalDisabled || isUploading;
+    input.disabled = disabled;
+    if (uploadButton) {
+      uploadButton.disabled = disabled;
+    }
+    if (fileInput) {
+      fileInput.disabled = disabled;
+    }
+  }
+
+  function setDisabled(disabled) {
+    if (type === "image") {
+      externalDisabled = Boolean(disabled);
+      updateDisabledState();
+    } else if (input) {
+      input.disabled = Boolean(disabled);
+    }
+  }
+
+  function setPreview(url) {
+    if (type !== "image" || !previewContainer || !previewImage) {
+      return;
+    }
+    if (url) {
+      previewImage.src = url;
+      previewContainer.hidden = false;
+    } else {
+      previewImage.src = "";
+      previewContainer.hidden = true;
+    }
+  }
+
+  function handleManualUrlChange() {
+    const trimmed = input.value.trim();
+    if (!trimmed) {
+      currentStoragePath = "";
+      lastUploadedUrl = "";
+    } else if (trimmed !== lastUploadedUrl) {
+      currentStoragePath = "";
+    }
+    setPreview(trimmed);
+    setError("");
+    if (uploadStatus) {
+      uploadStatus.textContent = "";
+    }
+  }
+
+  async function handleFileSelection(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    if (config.maxFileSize && file.size > config.maxFileSize) {
+      const maxSizeMb = Math.round((config.maxFileSize / (1024 * 1024)) * 10) / 10;
+      setError(`File is too large. Maximum size is ${maxSizeMb} MB.`);
+      if (uploadStatus) {
+        uploadStatus.textContent = `Upload cancelled. File exceeds ${maxSizeMb} MB.`;
+      }
+      fileInput.value = "";
+      return;
+    }
+
+    const previousPath = currentStoragePath;
+    if (uploadStatus) {
+      uploadStatus.textContent = "Uploading...";
+    }
+    if (progressBar) {
+      progressBar.hidden = false;
+      progressBar.value = 0;
+    }
+    isUploading = true;
+    updateDisabledState();
+
+    try {
+      const directory =
+        typeof config.storageFolder === "function"
+          ? config.storageFolder()
+          : config.storageFolder || "uploads";
+      const { downloadURL, storagePath } = await uploadFileToStorage({
+        file,
+        directory,
+        onProgress: (progress) => {
+          if (progressBar) {
+            progressBar.hidden = false;
+            progressBar.value = progress;
+          }
+          if (uploadStatus) {
+            uploadStatus.textContent = `Uploading... ${progress}%`;
+          }
+        }
+      });
+
+      input.value = downloadURL;
+      lastUploadedUrl = downloadURL;
+      currentStoragePath = storagePath;
+      setPreview(downloadURL);
+      if (uploadStatus) {
+        uploadStatus.textContent = "Upload complete.";
+      }
+      if (previousPath && previousPath !== storagePath && config.deletePreviousOnReplace !== false) {
+        try {
+          await deleteStorageObject(previousPath);
+        } catch (error) {
+          console.warn("Failed to remove previous file", error);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      const message = error?.message || "Unable to upload file.";
+      setError(message);
+      if (uploadStatus) {
+        uploadStatus.textContent = message;
+      }
+    } finally {
+      isUploading = false;
+      if (progressBar) {
+        progressBar.hidden = true;
+        progressBar.value = 0;
+      }
+      updateDisabledState();
+      if (fileInput) {
+        fileInput.value = "";
+      }
+    }
+  }
+
+  function setValue(value, context = {}) {
+    if (type === "list") {
+      input.value = Array.isArray(value) ? value.join("\n") : value || "";
+      return;
+    }
+    if (type === "datetime") {
+      input.value = value ? formatDateForInput(value) : "";
+      return;
+    }
+    if (type === "number") {
+      input.value = value === null || value === undefined ? "" : String(value);
+      return;
+    }
+    if (type === "image") {
+      const stringValue = value === null || value === undefined ? "" : String(value);
+      input.value = stringValue;
+      const storedPath = config.storagePathField ? getNestedValue(context, config.storagePathField) : "";
+      currentStoragePath = storedPath || "";
+      lastUploadedUrl = storedPath ? stringValue : "";
+      setPreview(stringValue);
+      if (uploadStatus) {
+        uploadStatus.textContent = "";
+      }
+      if (progressBar) {
+        progressBar.hidden = true;
+        progressBar.value = 0;
+      }
+      updateDisabledState();
+      return;
+    }
+    input.value = value === null || value === undefined ? "" : String(value);
+  }
+
+  function getImageValue() {
+    const trimmed = input.value.trim();
+    if (!trimmed) {
+      currentStoragePath = "";
+      lastUploadedUrl = "";
+      setPreview("");
+    }
+    const extraValues = [];
+    if (config.storagePathField) {
+      extraValues.push({ path: config.storagePathField, value: currentStoragePath || null });
+    }
+    return { value: trimmed, extraValues };
+  }
+
+  return {
+    field,
+    input,
+    config,
+    setError,
+    clearError,
+    setValue,
+    setDisabled,
+    getValue: type === "image" ? getImageValue : undefined
+  };
+}
+
+function collectFieldValues(controls) {
+  const values = {};
+  const errors = [];
+
+  controls.forEach((control) => {
+    control.clearError();
+    const result = typeof control.getValue === "function" ? control.getValue() : parseControlValue(control);
+    const { value, error, extraValues } = result || {};
+    if (error) {
+      control.setError(error);
+      errors.push(error);
+      return;
+    }
+    if (control.config.required && isValueEmpty(value, control.config.type)) {
+      const message = control.config.requiredMessage || "This field is required.";
+      control.setError(message);
+      errors.push(message);
+      return;
+    }
+    setNestedValue(values, control.config.name, value);
+    if (Array.isArray(extraValues)) {
+      extraValues.forEach((extra) => {
+        if (!extra || typeof extra.path !== "string") {
+          return;
+        }
+        setNestedValue(values, extra.path, extra.value);
+      });
+    }
+  });
+
+  return { values, errors };
+}
+
+function parseControlValue(control) {
+  const type = control.config.type || "text";
+  const rawValue = control.input.value;
+  const shouldTrim = control.config.trim !== false && !["html", "textarea", "list"].includes(type);
+  const value = shouldTrim && typeof rawValue === "string" ? rawValue.trim() : rawValue;
+
+  try {
+    if (type === "number") {
+      if (value === "" || value === null) {
+        return { value: null };
+      }
+      const parsed = Number(value);
+      if (Number.isNaN(parsed)) {
+        throw new Error("Enter a valid number.");
+      }
+      return { value: parsed };
+    }
+    if (type === "datetime") {
+      if (!value) {
+        return { value: null };
+      }
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        throw new Error("Enter a valid date and time.");
+      }
+      return { value: date };
+    }
+    if (type === "list") {
+      if (!rawValue) {
+        return { value: [] };
+      }
+      return {
+        value: rawValue
+          .split("\n")
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
+      };
+    }
+    return { value };
+  } catch (error) {
+    return { value: null, error: error?.message || "Invalid value." };
+  }
+}
+
+function setNestedValue(target, path, value) {
+  if (!path) {
+    return;
+  }
+  const segments = path.split(".").map((segment) => segment.trim()).filter(Boolean);
+  if (!segments.length) {
+    return;
+  }
+  let current = target;
+  segments.forEach((segment, index) => {
+    if (index === segments.length - 1) {
+      current[segment] = value;
+    } else {
+      if (!current[segment] || typeof current[segment] !== "object") {
+        current[segment] = {};
+      }
+      current = current[segment];
+    }
+  });
+}
+
+function isValueEmpty(value, type) {
+  if (type === "list") {
+    return !value || value.length === 0;
+  }
+  if (type === "number") {
+    return value === null || value === undefined || Number.isNaN(value);
+  }
+  if (type === "datetime") {
+    return !value;
+  }
+  return value === "" || value === null || value === undefined;
+}
+
+function formatDisplayDate(value) {
+  const date = toDate(value);
+  if (!date) {
+    return "";
+  }
+  return date.toLocaleDateString();
+}
+
+function toDate(value) {
+  if (!value) {
+    return null;
+  }
+  if (value instanceof Date) {
+    return value;
+  }
+  if (typeof value === "number") {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  if (typeof value === "string") {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  if (typeof value === "object") {
+    if (typeof value.toDate === "function") {
+      return value.toDate();
+    }
+    if (typeof value.seconds === "number") {
+      const milliseconds = value.seconds * 1000 + Math.floor((value.nanoseconds || 0) / 1e6);
+      const date = new Date(milliseconds);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+  }
+  return null;
+}
+
+function formatDateForInput(value) {
+  const date = toDate(value);
+  if (!date) {
+    return "";
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function setBanner(target, message, variant = "info") {
+  if (!target) {
+    return;
+  }
+  if (!message) {
+    target.textContent = "";
+    target.className = "helper-text";
+    return;
+  }
+  target.textContent = message;
+  if (variant === "success") {
+    target.className = "success-banner";
+  } else if (variant === "error") {
+    target.className = "error-banner";
+  } else {
+    target.className = "helper-text";
+  }
 }
 
 function createTabButton(label, route) {
@@ -126,599 +1503,4 @@ function createTabButton(label, route) {
   button.dataset.route = route;
   button.textContent = label;
   return button;
-}
-
-function createCopySection(statusArea) {
-  const section = document.createElement("section");
-  section.className = "section-card";
-  section.id = "copy-section";
-
-  const heading = document.createElement("h2");
-  heading.textContent = "Site copy";
-
-  const description = document.createElement("p");
-  description.className = "helper-text";
-  description.textContent =
-    "Manage hero text, announcements, and other copy blocks that power the public site.";
-
-  const list = document.createElement("div");
-  list.className = "list";
-
-  const form = createCopyForm({
-    onSubmit: async (payload) => {
-      try {
-        await saveDocument("siteCopy", payload);
-        showSuccess("Copy saved successfully.");
-        form.reset();
-      } catch (error) {
-        console.error(error);
-        showError(parseError(error));
-      }
-    }
-  });
-
-  section.append(heading, description, list, form.formElement);
-
-  function showSuccess(message) {
-    statusArea.textContent = message;
-    statusArea.className = "success-banner";
-  }
-
-  function showError(message) {
-    statusArea.textContent = message;
-    statusArea.className = "error-banner";
-  }
-
-  return {
-    section,
-    renderList(items) {
-      list.innerHTML = "";
-      if (!items.length) {
-        const empty = document.createElement("p");
-        empty.className = "helper-text";
-        empty.textContent = "No copy has been created yet.";
-        list.append(empty);
-        return;
-      }
-
-      items.forEach((item) => {
-        const entry = document.createElement("div");
-        entry.className = "list-item";
-
-        const title = document.createElement("strong");
-        title.textContent = item.title || item.id;
-
-        const summary = document.createElement("p");
-        summary.textContent = item.content || "(No content yet)";
-
-        const actions = document.createElement("div");
-        actions.className = "list-item-actions";
-
-        const editButton = document.createElement("button");
-        editButton.className = "secondary-btn";
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", () => {
-          form.fill(item);
-          window.location.hash = "copy";
-          window.scrollTo({ top: form.formElement.offsetTop - 60, behavior: "smooth" });
-        });
-
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "secondary-btn";
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", async () => {
-          if (!confirm("Delete this copy block?")) {
-            return;
-          }
-          try {
-            await deleteDocument("siteCopy", item.id);
-            showSuccess("Copy deleted.");
-          } catch (error) {
-            console.error(error);
-            showError(parseError(error));
-          }
-        });
-
-        actions.append(editButton, deleteButton);
-
-        entry.append(title, summary, actions);
-        list.append(entry);
-      });
-    }
-  };
-}
-
-function createImageSection(statusArea) {
-  const section = document.createElement("section");
-  section.className = "section-card";
-  section.id = "images-section";
-  section.style.display = "none";
-
-  const heading = document.createElement("h2");
-  heading.textContent = "Image metadata";
-
-  const description = document.createElement("p");
-  description.className = "helper-text";
-  description.textContent =
-    "Track image titles, descriptions, and alt text so the marketing team can keep the gallery fresh.";
-
-  const list = document.createElement("div");
-  list.className = "list";
-
-  const form = createImageForm({
-    onSubmit: async (payload) => {
-      try {
-        await saveDocument("imageMetadata", payload);
-        showSuccess("Image metadata saved.");
-        form.reset();
-      } catch (error) {
-        console.error(error);
-        showError(parseError(error));
-      }
-    }
-  });
-
-  section.append(heading, description, list, form.formElement);
-
-  function showSuccess(message) {
-    statusArea.textContent = message;
-    statusArea.className = "success-banner";
-  }
-
-  function showError(message) {
-    statusArea.textContent = message;
-    statusArea.className = "error-banner";
-  }
-
-  return {
-    section,
-    renderList(items) {
-      list.innerHTML = "";
-      if (!items.length) {
-        const empty = document.createElement("p");
-        empty.className = "helper-text";
-        empty.textContent = "No images found yet.";
-        list.append(empty);
-        return;
-      }
-
-      items.forEach((item) => {
-        const entry = document.createElement("div");
-        entry.className = "list-item";
-
-        const title = document.createElement("strong");
-        title.textContent = item.title || item.id;
-
-        const url = document.createElement("p");
-        url.textContent = item.url || "(No URL provided)";
-        url.className = "helper-text";
-
-        const description = document.createElement("p");
-        description.textContent = item.description || "";
-
-        const altText = document.createElement("p");
-        altText.className = "helper-text";
-        altText.textContent = item.altText ? `Alt text: ${item.altText}` : "";
-
-        const actions = document.createElement("div");
-        actions.className = "list-item-actions";
-
-        const editButton = document.createElement("button");
-        editButton.className = "secondary-btn";
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", () => {
-          form.fill(item);
-          window.location.hash = "images";
-          window.scrollTo({ top: form.formElement.offsetTop - 60, behavior: "smooth" });
-        });
-
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "secondary-btn";
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", async () => {
-          if (!confirm("Delete this image entry?")) {
-            return;
-          }
-          try {
-            await deleteDocument("imageMetadata", item.id);
-            showSuccess("Image entry deleted.");
-          } catch (error) {
-            console.error(error);
-            showError(parseError(error));
-          }
-        });
-
-        actions.append(editButton, deleteButton);
-
-        entry.append(title, url, description, altText, actions);
-        list.append(entry);
-      });
-    }
-  };
-}
-
-function createCopyForm({ onSubmit }) {
-  const formElement = document.createElement("form");
-  formElement.dataset.mode = "create";
-
-  const heading = document.createElement("h3");
-  heading.textContent = "Create or edit copy";
-
-  const helper = document.createElement("p");
-  helper.className = "helper-text";
-  helper.textContent =
-    "Give the copy block a descriptive title so you can reuse it around the site.";
-
-  const idField = createTextInput({
-    id: "copy-id",
-    label: "Document ID",
-    placeholder: "Generated automatically for new copy",
-    disabled: true
-  });
-
-  const titleField = createTextInput({
-    id: "copy-title",
-    label: "Title",
-    required: true,
-    placeholder: "Admissions hero, newsletter banner, etc."
-  });
-
-  const contentField = createTextarea({
-    id: "copy-content",
-    label: "Content",
-    required: true,
-    placeholder: "Enter the text that should appear on the public site"
-  });
-
-  const resetButton = document.createElement("button");
-  resetButton.type = "button";
-  resetButton.className = "secondary-btn";
-  resetButton.textContent = "Reset";
-
-  const submitButton = document.createElement("button");
-  submitButton.type = "submit";
-  submitButton.className = "primary-btn";
-  submitButton.textContent = "Save copy";
-
-  const message = document.createElement("div");
-  message.className = "helper-text";
-
-  const buttonGroup = document.createElement("div");
-  buttonGroup.className = "list-item-actions";
-  buttonGroup.append(resetButton, submitButton);
-
-  formElement.append(heading, helper, idField.field, titleField.field, contentField.field, buttonGroup, message);
-
-  let currentId = null;
-
-  formElement.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const title = titleField.input.value.trim();
-    const content = contentField.textarea.value.trim();
-
-    if (!title) {
-      titleField.setError("Title is required.");
-      return;
-    }
-    if (!content) {
-      contentField.setError("Content cannot be empty.");
-      return;
-    }
-
-    clearErrors();
-    setLoading(true);
-
-    try {
-      await onSubmit({ id: currentId, title, content });
-      message.textContent = "Copy saved.";
-      message.className = "success-banner";
-      if (!currentId) {
-        formElement.reset();
-      }
-      currentId = null;
-      idField.input.value = "";
-      formElement.dataset.mode = "create";
-      submitButton.textContent = "Save copy";
-    } catch (error) {
-      console.error(error);
-      message.textContent = parseError(error);
-      message.className = "error-banner";
-    } finally {
-      setLoading(false);
-    }
-  });
-
-  resetButton.addEventListener("click", () => {
-    currentId = null;
-    formElement.reset();
-    idField.input.value = "";
-    formElement.dataset.mode = "create";
-    submitButton.textContent = "Save copy";
-    clearErrors();
-    message.textContent = "";
-    message.className = "helper-text";
-  });
-
-  function clearErrors() {
-    titleField.clearError();
-    contentField.clearError();
-  }
-
-  function setLoading(value) {
-    submitButton.disabled = value;
-    resetButton.disabled = value;
-    submitButton.textContent = value ? "Saving..." : formElement.dataset.mode === "edit" ? "Update copy" : "Save copy";
-  }
-
-  return {
-    formElement,
-    fill(item) {
-      currentId = item.id;
-      formElement.dataset.mode = "edit";
-      idField.input.value = item.id;
-      titleField.input.value = item.title || "";
-      contentField.textarea.value = item.content || "";
-      submitButton.textContent = "Update copy";
-      message.textContent = "Editing existing copy.";
-      message.className = "helper-text";
-      clearErrors();
-    },
-    reset() {
-      currentId = null;
-      formElement.reset();
-      idField.input.value = "";
-      formElement.dataset.mode = "create";
-      submitButton.textContent = "Save copy";
-    }
-  };
-}
-
-function createImageForm({ onSubmit }) {
-  const formElement = document.createElement("form");
-  formElement.dataset.mode = "create";
-
-  const heading = document.createElement("h3");
-  heading.textContent = "Create or edit image metadata";
-
-  const helper = document.createElement("p");
-  helper.className = "helper-text";
-  helper.textContent = "Store alt text and descriptions to keep the site accessible.";
-
-  const idField = createTextInput({
-    id: "image-id",
-    label: "Document ID",
-    placeholder: "Generated automatically for new entries",
-    disabled: true
-  });
-
-  const titleField = createTextInput({
-    id: "image-title",
-    label: "Title",
-    required: true,
-    placeholder: "Graduation day hero image"
-  });
-
-  const urlField = createTextInput({
-    id: "image-url",
-    label: "Image URL",
-    required: true,
-    placeholder: "https://..."
-  });
-
-  const altField = createTextInput({
-    id: "image-alt",
-    label: "Alt text",
-    required: true,
-    placeholder: "Students celebrating on stage"
-  });
-
-  const descriptionField = createTextarea({
-    id: "image-description",
-    label: "Description",
-    placeholder: "Optional context for editors"
-  });
-
-  const resetButton = document.createElement("button");
-  resetButton.type = "button";
-  resetButton.className = "secondary-btn";
-  resetButton.textContent = "Reset";
-
-  const submitButton = document.createElement("button");
-  submitButton.type = "submit";
-  submitButton.className = "primary-btn";
-  submitButton.textContent = "Save image";
-
-  const message = document.createElement("div");
-  message.className = "helper-text";
-
-  const buttonGroup = document.createElement("div");
-  buttonGroup.className = "list-item-actions";
-  buttonGroup.append(resetButton, submitButton);
-
-  formElement.append(
-    heading,
-    helper,
-    idField.field,
-    titleField.field,
-    urlField.field,
-    altField.field,
-    descriptionField.field,
-    buttonGroup,
-    message
-  );
-
-  let currentId = null;
-
-  formElement.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const title = titleField.input.value.trim();
-    const url = urlField.input.value.trim();
-    const altText = altField.input.value.trim();
-    const description = descriptionField.textarea.value.trim();
-
-    clearErrors();
-
-    const errors = [];
-    if (!title) {
-      errors.push("Title is required.");
-      titleField.setError("Please add a title.");
-    }
-    if (!url) {
-      errors.push("Image URL is required.");
-      urlField.setError("Please add a URL.");
-    } else if (!/^https?:\/\//i.test(url)) {
-      errors.push("Enter a valid URL starting with http or https.");
-      urlField.setError("Enter a valid URL starting with http or https.");
-    }
-    if (!altText) {
-      errors.push("Alt text is required for accessibility.");
-      altField.setError("Alt text is required.");
-    }
-
-    if (errors.length) {
-      message.textContent = errors.join(" ");
-      message.className = "error-banner";
-      return;
-    }
-
-    message.textContent = "";
-    setLoading(true);
-
-    try {
-      await onSubmit({ id: currentId, title, url, altText, description });
-      message.textContent = "Image entry saved.";
-      message.className = "success-banner";
-      if (!currentId) {
-        formElement.reset();
-      }
-      currentId = null;
-      idField.input.value = "";
-      formElement.dataset.mode = "create";
-      submitButton.textContent = "Save image";
-    } catch (error) {
-      console.error(error);
-      message.textContent = parseError(error);
-      message.className = "error-banner";
-    } finally {
-      setLoading(false);
-    }
-  });
-
-  resetButton.addEventListener("click", () => {
-    currentId = null;
-    formElement.reset();
-    idField.input.value = "";
-    formElement.dataset.mode = "create";
-    submitButton.textContent = "Save image";
-    clearErrors();
-    message.textContent = "";
-    message.className = "helper-text";
-  });
-
-  function clearErrors() {
-    titleField.clearError();
-    urlField.clearError();
-    altField.clearError();
-    descriptionField.clearError();
-  }
-
-  function setLoading(value) {
-    submitButton.disabled = value;
-    resetButton.disabled = value;
-    submitButton.textContent = value ? "Saving..." : formElement.dataset.mode === "edit" ? "Update image" : "Save image";
-  }
-
-  return {
-    formElement,
-    fill(item) {
-      currentId = item.id;
-      formElement.dataset.mode = "edit";
-      idField.input.value = item.id;
-      titleField.input.value = item.title || "";
-      urlField.input.value = item.url || "";
-      altField.input.value = item.altText || "";
-      descriptionField.textarea.value = item.description || "";
-      submitButton.textContent = "Update image";
-      message.textContent = "Editing existing image entry.";
-      message.className = "helper-text";
-      clearErrors();
-    },
-    reset() {
-      currentId = null;
-      formElement.reset();
-      idField.input.value = "";
-      formElement.dataset.mode = "create";
-      submitButton.textContent = "Save image";
-    }
-  };
-}
-
-function createTextInput({ id, label, required = false, placeholder = "", disabled = false }) {
-  const field = document.createElement("div");
-  field.className = "field";
-
-  const labelElement = document.createElement("label");
-  labelElement.setAttribute("for", id);
-  labelElement.textContent = label;
-
-  const input = document.createElement("input");
-  input.id = id;
-  input.placeholder = placeholder;
-  input.required = required;
-  input.disabled = disabled;
-
-  const error = document.createElement("div");
-  error.className = "validation-error";
-
-  field.append(labelElement, input, error);
-
-  return {
-    field,
-    input,
-    setError(message) {
-      error.textContent = message;
-    },
-    clearError() {
-      error.textContent = "";
-    }
-  };
-}
-
-function createTextarea({ id, label, required = false, placeholder = "" }) {
-  const field = document.createElement("div");
-  field.className = "field";
-
-  const labelElement = document.createElement("label");
-  labelElement.setAttribute("for", id);
-  labelElement.textContent = label;
-
-  const textarea = document.createElement("textarea");
-  textarea.id = id;
-  textarea.placeholder = placeholder;
-  textarea.required = required;
-
-  const error = document.createElement("div");
-  error.className = "validation-error";
-
-  field.append(labelElement, textarea, error);
-
-  return {
-    field,
-    textarea,
-    setError(message) {
-      error.textContent = message;
-    },
-    clearError() {
-      error.textContent = "";
-    }
-  };
-}
-
-function parseError(error) {
-  if (!error) {
-    return "An unexpected error occurred.";
-  }
-  const message = typeof error === "string" ? error : error.message;
-  return message || "An unexpected error occurred.";
 }

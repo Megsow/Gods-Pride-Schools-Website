@@ -6,8 +6,6 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.13
 import {
   getAuth,
   signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
@@ -21,9 +19,16 @@ import {
   onSnapshot,
   query,
   orderBy,
+  limit,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
 const injectedConfig = window.__FIREBASE_CONFIG__;
 
@@ -31,7 +36,6 @@ let firebaseApp = null;
 let auth = null;
 let firestore = null;
 let storage = null;
-let googleProvider = null;
 
 if (injectedConfig && injectedConfig.apiKey) {
   firebaseApp = getApps().length ? getApps()[0] : initializeApp(injectedConfig);
@@ -46,6 +50,13 @@ if (injectedConfig && injectedConfig.apiKey) {
 
 export { firebaseApp, auth, firestore, storage };
 export const hasFirebaseConfig = Boolean(firebaseApp);
+
+function getPathSegments(path) {
+  if (!path || typeof path !== "string") {
+    throw new Error("A valid Firestore path is required.");
+  }
+  return path.split("/").map((segment) => segment.trim()).filter(Boolean);
+}
 
 function ensureAuth() {
   if (!auth) {
@@ -65,12 +76,13 @@ function ensureFirestore() {
   return firestore;
 }
 
-function getGoogleProvider() {
-  if (!googleProvider) {
-    googleProvider = new GoogleAuthProvider();
-    googleProvider.setCustomParameters?.({ prompt: "select_account" });
+function ensureStorage() {
+  if (!storage) {
+    throw new Error(
+      "Firebase Storage is not initialized. Ensure firebase-config.js sets window.__FIREBASE_CONFIG__ before loading admin scripts."
+    );
   }
-  return googleProvider;
+  return storage;
 }
 
 export function watchAuthState(callback) {
@@ -91,10 +103,6 @@ export function signInWithEmail(email, password) {
   return signInWithEmailAndPassword(ensureAuth(), email, password);
 }
 
-export function signInWithGoogle() {
-  return signInWithPopup(ensureAuth(), getGoogleProvider());
-}
-
 export function signOutUser() {
   return signOut(ensureAuth());
 }
@@ -104,11 +112,39 @@ export function subscribeToCollection(collectionName, callback, options = {}) {
     throw new Error("Collection name is required.");
   }
   const db = ensureFirestore();
-  const { orderByField, orderDirection = "asc" } = options;
+  const segments = getPathSegments(collectionName);
+  if (!segments.length) {
+    throw new Error("Collection path cannot be empty.");
+  }
 
-  let collectionRef = collection(db, collectionName);
+  const { orderByField, orderDirection = "asc", orderBy: orderByArgs, limit: limitValue } = options;
+
+  let collectionRef = collection(db, ...segments);
+  const constraints = [];
+
+  const normalisedOrderBy = Array.isArray(orderByArgs) ? orderByArgs : [];
+  normalisedOrderBy.forEach((entry) => {
+    if (!entry) return;
+    if (Array.isArray(entry)) {
+      const [field, direction = "asc"] = entry;
+      constraints.push(orderBy(field, direction));
+      return;
+    }
+    if (typeof entry === "object" && entry.field) {
+      constraints.push(orderBy(entry.field, entry.direction || "asc"));
+    }
+  });
+
   if (orderByField) {
-    collectionRef = query(collectionRef, orderBy(orderByField, orderDirection));
+    constraints.push(orderBy(orderByField, orderDirection));
+  }
+
+  if (limitValue) {
+    constraints.push(limit(limitValue));
+  }
+
+  if (constraints.length) {
+    collectionRef = query(collectionRef, ...constraints);
   }
 
   return onSnapshot(collectionRef, (snapshot) => {
@@ -126,16 +162,20 @@ export async function saveDocument(collectionName, data) {
   }
 
   const db = ensureFirestore();
+  const segments = getPathSegments(collectionName);
+  if (!segments.length) {
+    throw new Error("Collection path cannot be empty.");
+  }
   const { id, ...rest } = data;
   const timestamp = serverTimestamp();
 
   if (id) {
-    const docRef = doc(db, collectionName, id);
+    const docRef = doc(db, ...segments, id);
     await setDoc(docRef, { ...rest, updatedAt: timestamp }, { merge: true });
     return { id };
   }
 
-  const colRef = collection(db, collectionName);
+  const colRef = collection(db, ...segments);
   const docRef = await addDoc(colRef, { ...rest, createdAt: timestamp, updatedAt: timestamp });
   return { id: docRef.id };
 }
@@ -145,7 +185,87 @@ export function deleteDocument(collectionName, id) {
     throw new Error("Both collection name and document ID are required to delete a document.");
   }
   const db = ensureFirestore();
-  const docRef = doc(db, collectionName, id);
+  const segments = getPathSegments(collectionName);
+  if (!segments.length) {
+    throw new Error("Collection path cannot be empty.");
+  }
+  const docRef = doc(db, ...segments, id);
   return deleteDoc(docRef);
+}
+
+export function subscribeToDocument(path, callback) {
+  if (!path) {
+    throw new Error("Document path is required.");
+  }
+  const db = ensureFirestore();
+  const segments = getPathSegments(path);
+  if (segments.length < 2 || segments.length % 2 !== 0) {
+    throw new Error(`Invalid document path: ${path}`);
+  }
+  const docRef = doc(db, ...segments);
+  return onSnapshot(docRef, (snapshot) => {
+    if (snapshot.exists()) {
+      callback({ id: snapshot.id, ...snapshot.data() });
+    } else {
+      callback(null);
+    }
+  });
+}
+
+export function uploadFileToStorage({ file, directory = "uploads", onProgress } = {}) {
+  if (!file || !(file instanceof File)) {
+    throw new Error("A valid File object is required to upload to storage.");
+  }
+
+  const storageInstance = ensureStorage();
+  const cleanDirectory = (directory || "uploads").replace(/(^\/+|\/+?$)/g, "");
+  const safeDirectory = cleanDirectory.length ? cleanDirectory : "uploads";
+  const extensionPart = file.name && file.name.includes(".") ? file.name.split(".").pop() : "";
+  const sanitisedExtension = extensionPart
+    ? `.${extensionPart.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}`
+    : "";
+  const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const storagePath = `${safeDirectory}/${uniqueId}${sanitisedExtension}`;
+  const storageRef = ref(storageInstance, storagePath);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        if (typeof onProgress === "function" && snapshot.totalBytes) {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          onProgress(progress);
+        }
+      },
+      (error) => {
+        reject(error);
+      },
+      async () => {
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve({ downloadURL, storagePath });
+        } catch (error) {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
+export async function deleteStorageObject(storagePath) {
+  if (!storagePath) {
+    return;
+  }
+  try {
+    const storageInstance = ensureStorage();
+    const storageRef = ref(storageInstance, storagePath);
+    await deleteObject(storageRef);
+  } catch (error) {
+    if (error?.code === "storage/object-not-found") {
+      return;
+    }
+    throw error;
+  }
 }
 

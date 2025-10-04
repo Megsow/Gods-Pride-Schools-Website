@@ -4,6 +4,7 @@ import {
   renderTestimonialCard,
   renderNewsCard,
   renderGalleryItem,
+  renderParentsCornerCard,
 } from './utils/renderers.js';
 
 const pageName = document.body?.dataset?.page || null;
@@ -14,6 +15,7 @@ const collectionRenderers = {
     announcements: renderAnnouncementCard,
     testimonials: renderTestimonialCard,
     mediaGallery: renderGalleryItem,
+    parentsCorner: renderParentsCornerCard,
   },
   news: {
     announcements: renderAnnouncementCard,
