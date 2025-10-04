@@ -1,0 +1,12 @@
+{
+  "name": "gods-pride-schools-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static marketing site enhanced with Firebase-powered dynamic content.",
+  "scripts": {
+    "start": "npx live-server --port=4173 --entry-file=index.html"
+  },
+  "dependencies": {
+    "firebase": "^10.13.0"
+  }
+}
