@@ -13,16 +13,22 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-<body>
+<body data-page="news">
   <header>
     <div class="logo">
-      <img src="logo_left.JPG" alt="Left Logo">
+      <img src="logo_left.JPG" alt="Left Logo" data-document="settings/global" data-field="logos.left.url"
+        data-attr="src" data-fallback="logo_left.JPG">
     </div>
-    <h1>GOD'S PRIDE GROUP OF SCHOOLS
-      <p class="slogan">Building Spiritual, Moral and Academic Excellence on a Firm Foundation</p>
-    </h1>
+    <div class="header-title">
+      <h1>
+        <span data-document="settings/global" data-field="siteName">GOD'S PRIDE GROUP OF SCHOOLS</span>
+      </h1>
+      <p class="slogan" data-document="settings/global" data-field="tagline">Building Spiritual, Moral and Academic
+        Excellence on a Firm Foundation</p>
+    </div>
     <div class="logo">
-      <img src="logo_right.JPG" alt="Right Logo">
+      <img src="logo_right.JPG" alt="Right Logo" data-document="settings/global" data-field="logos.right.url"
+        data-attr="src" data-fallback="logo_right.JPG">
     </div>
   </header>
 
@@ -39,10 +45,13 @@
   </nav>
   <div class="container">
     <section class="news">
-      <h2 class="section-title">News</h2>
+      <h2 class="section-title" data-document="content/news" data-field="heading">News</h2>
+      <p class="section-intro" data-document="content/news" data-field="intro" data-field-type="html">Stay up to date with
+        the latest milestones, celebrations, and events happening across God's Pride Group of Schools.</p>
       <article>
         <section class="announcement">
-          <div class="announcement-cards">
+          <h3 class="section-title" data-document="content/news" data-field="announcements.heading">Featured Announcements</h3>
+          <div class="announcement-cards" data-collection="announcements" data-collection-path="announcements" data-order-by="publishedAt:desc" data-limit="3">
             <div class="announcement-card">
               <img src="announcement-image1.jpeg" alt="Announcement 1">
               <h3>ADMISSIONS NOW OPEN!!!</h3>
@@ -121,56 +130,20 @@
         </section>
       </article>
       <article>
-        <h3 class="section-title">Latest News</h3>
-        <p>Date: August 28, 2024</p>
-        <section class="announcement">
-            <div class="announcement-card">
-              <img src="announcement-image2.jpeg" alt="Announcement 2">
+        <h3 class="section-title" data-document="content/news" data-field="latest.heading">Latest News</h3>
+        <div class="news-card-list" data-collection="news" data-collection-path="news" data-order-by="publishedAt:desc"
+          data-limit="6">
+          <div class="news-card">
+            <img src="announcement-image2.jpeg" alt="Announcement 2">
+            <div class="news-card-body">
               <h3>2024 Summer Splash !!!</h3>
-              <div class="scrolling-text">
-                <p><strong>🌞 Unlock Your Child’s Future with AI: Join Our Free AI Career Development Event! 🌞</strong></p>
-              </div>
-              <a href="#" class="read-more-link">Read More</a>
-              <div class="expanded-content">
-                <p><strong>🌞 Unlock Your Child’s Future with AI: Join Our Free AI Career Development Event! 🌞</strong></p>
-                <p>Empowering Kids and Teens to Explore the World of Coding and Artificial Intelligence Through Hands-on Activities and Interactive Sessions organized by DSN.</p>
-                <p><strong>Highlights:</strong></p>
-                <ul>
-                  <li>Dear Parent,</li>
-                  <br/><br/>
-                  <li>We are thrilled to invite your child to the FREE AI Career Development Event for Kids and Teens.</li>
-                  <br/><br/>
-                  <li>Event Details:</li>
-                  <br/><br/>
-                  <li>Date: Wednesday, 28th August 2024</li>
-                  <br/><br/>
-                  <li>Time: 11:00 am - 2:00 pm</li>
-                  <br/><br/>
-                  <li>Mode of Delivery: Hybrid</li>
-                  <br/><br/>
-                  <li>Venue 1: DSN AI Hub, Yaba, Lagos | ZOOM & YouTube</li>
-                  <br/><br/>
-                  <li>Venue 2: God’s Pride College, Ali Ishiba, Sango Ota, Ogun State | ZOOM & YouTube</li>
-                  <br/><br/>
-                  <li>This event is designed to inspire and engage young minds, introducing them to the basics of Coding and Artificial Intelligence through hands-on activities and interactive sessions.</li>
-                  <br/><br/>
-                  <li>Don’t miss out on this fantastic opportunity to unlock your child's hidden potential with the power of AI! Give them the opportunity to explore the exciting world of Artificial Intelligence, discover a new passion, and potentially pave the way for a future career in this dynamic field.</li>
-                  <br/><br/>
-                  <li>Click here to book a seat for your child: <a href="https://bit.ly/DSNAICareerDay24">https://bit.ly/DSNAICareerDay24</a></li>
-                  <br/><br/>
-                  <li>We look forward to seeing your child embark on this exciting journey into the world of AI.</li>
-                  <br/><br/>
-                  <li>God’s Pride Schools care.</li>
-                </ul>
-                <p>Don't miss out on this fantastic opportunity to make your summer unforgettable! Join us at God's
-                  Pride Group of Schools and discover a world of learning, fun, and personal growth.</p>
-              </div>
-            </div>
+              <p>🌞 Unlock Your Child’s Future with AI: Join Our Free AI Career Development Event! 🌞</p>
+              <p class="news-date">August 28, 2024</p>
+              <a href="https://bit.ly/DSNAICareerDay24" class="news-read-more">Read More</a>
             </div>
           </div>
-        </section>
+        </div>
       </article>
-      <!-- Add more articles as needed -->
     </section>
     <!-- Other content for the News page -->
   </div>
@@ -178,8 +151,10 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>Contact Us</h3>
-        <p>Email: godsprideschools2004@gmail.com</p>
-        <p>Phone: +234-9073366566, +234-8023516321</p>
+        <p>Email: <span data-document="settings/global" data-field="contact.email">godsprideschools2004@gmail.com</span>
+        </p>
+        <p>Phone: <span data-document="settings/global" data-field="contact.phone">+234-9073366566, +234-8023516321</span>
+        </p>
       </div>
       <div class="footer-section">
         <h3>Quick Links</h3>
@@ -198,19 +173,21 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <ul class="social-links">
-          <li><a href="https://www.facebook.com/godspridecollege2004"><img src="facebook-icon.png" alt="Facebook"></a>
+          <li><a href="https://www.facebook.com/godspridecollege2004" data-document="settings/global"
+              data-field="social.facebook" data-attr="href"><img src="facebook-icon.png" alt="Facebook"></a>
           </li>
-          <li><a href="https://instagram.com/godsprideschool?igshid=MzRlODBiNWFlZA=="><img src="instagram-icon.png"
-                alt="Instagram"></a></li>
+          <li><a href="https://instagram.com/godsprideschool?igshid=MzRlODBiNWFlZA==" data-document="settings/global"
+              data-field="social.instagram" data-attr="href"><img src="instagram-icon.png" alt="Instagram"></a></li>
         </ul>
       </div>
       <div class="footer-section">
         <h3>Our Address</h3>
-        <p>13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba, Sango Ota, Ogun State.</p>
+        <p data-document="settings/global" data-field="address">13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba,
+          Sango Ota, Ogun State.</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 MEGSOW. All Rights Reserved.</p>
+      <p data-document="settings/global" data-field="footer.copyright">&copy; 2025 MEGSOW. All Rights Reserved.</p>
     </div>
   </footer>
 
@@ -219,6 +196,8 @@
     src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="firebase-config.js"></script>
+  <script type="module" src="src/main.js"></script>
   <script src="script.js"></script>
   
 </body>

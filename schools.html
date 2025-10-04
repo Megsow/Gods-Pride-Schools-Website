@@ -11,17 +11,20 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 </head>
 
-<body>
+<body data-page="schools">
   <header class="school-header d-flex justify-content-between align-items-center px-4 py-3">
     <div class="logo">
-      <img src="logo_left.JPG" alt="Left Logo" />
+      <img src="logo_left.JPG" alt="Left Logo" data-document="settings/global" data-field="logos.left.url"
+        data-attr="src" data-fallback="logo_left.JPG" />
     </div>
     <div class="text-center">
-      <h1>GOD'S PRIDE GROUP OF SCHOOLS</h1>
-      <p class="slogan">Building Spiritual, Moral and Academic Excellence on a Firm Foundation</p>
+      <h1><span data-document="settings/global" data-field="siteName">GOD'S PRIDE GROUP OF SCHOOLS</span></h1>
+      <p class="slogan" data-document="settings/global" data-field="tagline">Building Spiritual, Moral and Academic
+        Excellence on a Firm Foundation</p>
     </div>
     <div class="logo">
-      <img src="logo_right.JPG" alt="Right Logo" />
+      <img src="logo_right.JPG" alt="Right Logo" data-document="settings/global" data-field="logos.right.url"
+        data-attr="src" data-fallback="logo_right.JPG" />
     </div>
   </header>
 
@@ -38,8 +41,8 @@
   </nav>
 
   <main class="container my-5">
-    <!-- Academics Overview -->
-    <section class="academics-overview text-center mb-5">
+    <section class="academics-overview text-center mb-5" data-document="content/schools" data-field="overview"
+      data-field-type="html">
       <h2 class="section-title">Our Academic Program</h2>
       <p class="overview-text mx-auto" style="max-width: 800px;">
         Our academic program is designed to develop <strong>critical thinking</strong>,
@@ -48,8 +51,7 @@
       </p>
     </section>
 
-    <!-- Section Breakdowns as Cards -->
-    <section class="academics-breakdown">
+    <section class="academics-breakdown" data-document="content/schools" data-field="programs" data-field-type="html">
       <div class="cards-grid">
         <div class="card">
           <h3>Nursery School</h3>
@@ -71,8 +73,10 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>Contact Us</h3>
-        <p>Email: godsprideschools2004@gmail.com</p>
-        <p>Phone: +234-9073366566, +234-8023516321</p>
+        <p>Email: <span data-document="settings/global" data-field="contact.email">godsprideschools2004@gmail.com</span>
+        </p>
+        <p>Phone: <span data-document="settings/global" data-field="contact.phone">+234-9073366566, +234-8023516321</span>
+        </p>
       </div>
       <div class="footer-section">
         <h3>Quick Links</h3>
@@ -88,17 +92,20 @@
       <div class="footer-section">
         <h3>Follow Us</h3>
         <ul class="social-links">
-          <li><a href="https://www.facebook.com/godspridecollege2004"><img src="facebook-icon.png" alt="Facebook"></a></li>
-          <li><a href="https://instagram.com/godsprideschool"><img src="instagram-icon.png" alt="Instagram"></a></li>
+          <li><a href="https://www.facebook.com/godspridecollege2004" data-document="settings/global"
+              data-field="social.facebook" data-attr="href"><img src="facebook-icon.png" alt="Facebook"></a></li>
+          <li><a href="https://instagram.com/godsprideschool" data-document="settings/global"
+              data-field="social.instagram" data-attr="href"><img src="instagram-icon.png" alt="Instagram"></a></li>
         </ul>
       </div>
       <div class="footer-section">
         <h3>Our Address</h3>
-        <p>13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba, Sango Ota, Ogun State.</p>
+        <p data-document="settings/global" data-field="address">13/15 Olugbemi Street, Off Faith Chapel, Ali-Ishiba,
+          Sango Ota, Ogun State.</p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 MEGSOW. All Rights Reserved.</p>
+      <p data-document="settings/global" data-field="footer.copyright">&copy; 2025 MEGSOW. All Rights Reserved.</p>
     </div>
   </footer>
 
@@ -107,6 +114,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="firebase-config.js"></script>
+  <script type="module" src="src/main.js"></script>
   <script src="script.js"></script>
 </body>
 
