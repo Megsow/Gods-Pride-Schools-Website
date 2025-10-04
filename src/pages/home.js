@@ -69,11 +69,41 @@ function reinitialiseTestimonialCarousel() {
   });
 }
 
+function attachAnnouncementInteractions(container) {
+  if (!(container instanceof Element)) {
+    return;
+  }
+
+  container.querySelectorAll('.read-more-link').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      const card = link.closest('.announcement-card');
+      const expandedContent = card?.querySelector('.expanded-content');
+      if (!expandedContent) {
+        return;
+      }
+
+      expandedContent.classList.toggle('show');
+      link.textContent = expandedContent.classList.contains('show') ? 'Read Less' : 'Read More';
+    });
+  });
+}
+
 export async function renderPage() {
   await hydrateCarousel();
+  reinitialiseTestimonialCarousel();
+
+  const announcementsContainer = document.querySelector('[data-collection="announcements"]');
+  if (announcementsContainer) {
+    attachAnnouncementInteractions(announcementsContainer);
+  }
+
   document.addEventListener('collection:hydrated', event => {
     if (event.detail?.key === 'testimonials') {
       reinitialiseTestimonialCarousel();
+    }
+    if (event.detail?.key === 'announcements') {
+      attachAnnouncementInteractions(event.detail.container || announcementsContainer);
     }
   });
 }
