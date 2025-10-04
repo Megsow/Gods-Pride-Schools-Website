@@ -1,0 +1,249 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background-color: #f5f5f5;
+  color: #1f2933;
+}
+
+body {
+  margin: 0;
+  background-color: inherit;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.admin-card {
+  width: min(100%, 1080px);
+  background: #ffffffcc;
+  backdrop-filter: blur(8px);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+  padding: 2.5rem;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: #0f172a;
+}
+
+.admin-nav {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-nav button {
+  border: none;
+  background: rgba(148, 163, 184, 0.2);
+  color: #1f2933;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.admin-nav button.active,
+.admin-nav button:hover {
+  background: #2563eb;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.admin-content {
+  display: grid;
+  gap: 2rem;
+}
+
+.section-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.section-card h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.35rem;
+  color: #0f172a;
+}
+
+.list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.list-item {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 1rem;
+  border-radius: 12px;
+  display: grid;
+  gap: 0.35rem;
+  background: #f8fafc;
+}
+
+.list-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+button, input, textarea {
+  font: inherit;
+}
+
+.primary-btn,
+.secondary-btn {
+  border-radius: 8px;
+  border: none;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(120deg, #2563eb, #9333ea);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 35px rgba(79, 70, 229, 0.45);
+}
+
+.secondary-btn {
+  background: rgba(148, 163, 184, 0.25);
+  color: #0f172a;
+}
+
+.secondary-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(148, 163, 184, 0.35);
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.field input,
+.field textarea {
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 0.65rem 0.75rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.helper-text {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.error-banner {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+}
+
+.success-banner {
+  color: #166534;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.32);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+}
+
+.login-card {
+  max-width: 420px;
+  margin: 5vh auto;
+  padding: 2.5rem 2rem;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.15);
+}
+
+.login-card h1 {
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+.login-card form {
+  margin-top: 1.5rem;
+}
+
+.validation-error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0f172a;
+}
+
+.loading-indicator::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 99, 235, 0.35);
+  border-top-color: #2563eb;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-card {
+    padding: 1.75rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
