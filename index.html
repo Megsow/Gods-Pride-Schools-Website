@@ -11,8 +11,6 @@
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 </head>
 
 <body data-page="home">
@@ -31,17 +29,11 @@
     <div class="logo">
       <img src="logo_right.JPG" alt="Right Logo" data-document="settings/global" data-field="logos.right.url"
         data-attr="src" data-fallback="logo_right.JPG">
-      <img data-storage-field="leftLogoPath" data-placeholder="logo_left.JPG" src="" alt="Left Logo">
     </div>
     <div class="hero-copy">
-      <h1 data-firestore-field="hero-title">GOD'S PRIDE GROUP OF SCHOOLS</h1>
-      <p class="slogan" data-firestore-field="hero-slogan">Building Spiritual, Moral and Academic Excellence on a Firm
-        Foundation</p>
-      <div id="hero-loading" class="loading-message" hidden>Loading school profile...</div>
-      <div id="hero-error" class="error-message" hidden></div>
-    </div>
-    <div class="logo">
-      <img data-storage-field="rightLogoPath" data-placeholder="logo_right.JPG" src="" alt="Right Logo">
+      <h1 data-document="siteContent/homeHero" data-field="title">GOD'S PRIDE GROUP OF SCHOOLS</h1>
+      <p class="slogan" data-document="siteContent/homeHero" data-field="slogan">Building Spiritual, Moral and Academic
+        Excellence on a Firm Foundation</p>
     </div>
   </header>
 
@@ -79,14 +71,6 @@
           <img src="carousel-image3.jpg" class="d-block w-100" alt="Image 4">
         </div>
       </div>
-  
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators"></ol>
-
-      <div class="carousel-inner"></div>
-      <div id="carousel-loading" class="loading-message" hidden>Loading highlights...</div>
-      <div id="carousel-error" class="error-message" hidden></div>
-
       <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
@@ -104,8 +88,10 @@
       </h2>
       <div class="scrolling-text" data-document="settings/homepage" data-field="intro.marquee"
         data-field-type="html">The Home Of Godly Global Champions</div>
-      <h2 class="section-title" data-firestore-field="hero-subtitle">God's Pride Group of Schools</h2>
-      <div class="scrolling-text" data-firestore-field="hero-tagline">The Home Of Godly Global Champions</div>
+      <h2 class="section-title" data-document="siteContent/homeHero" data-field="subtitle">God's Pride Group of Schools
+      </h2>
+      <div class="scrolling-text" data-document="siteContent/homeHero" data-field="tagline">The Home Of Godly Global
+        Champions</div>
     </section>
   </div>
   
@@ -189,10 +175,6 @@
             </p>
           </div>
         </div>
-      <h2 class="section-title">Latest Announcements</h2>
-      <div class="announcement-cards" data-content="announcements">
-        <div class="loading-message" data-role="loading" hidden>Loading announcements...</div>
-        <div class="error-message" data-role="error" hidden></div>
       </div>
     </section>
 
@@ -242,10 +224,6 @@
             <cite>- Mr. Gbadura Saka HND, MBA, MNIM, FCTI, FCA, Parent</cite>
           </div>
         </div>
-      <h2 class="section-title">What Our Students and Parents Say</h2>
-      <div class="testimonial-carousel" data-content="testimonials">
-        <div class="loading-message" data-role="loading" hidden>Loading testimonials...</div>
-        <div class="error-message" data-role="error" hidden></div>
       </div>
     </section>
 
@@ -300,9 +278,24 @@
 
     <section class="media1">
       <h2 class="section-title">Media Gallery</h2>
-      <div class="media-gallery" data-content="media-gallery">
-        <div class="loading-message" data-role="loading" hidden>Loading gallery...</div>
-        <div class="error-message" data-role="error" hidden></div>
+      <div class="media-gallery" data-collection="mediaGallery" data-collection-path="media/gallery"
+        data-order-by="order:asc" data-limit="12">
+        <div class="media-item">
+          <img src="image80.JPG" alt="Robotics" class="responsive-image">
+          <p class="media-caption">Robotics</p>
+        </div>
+        <div class="media-item">
+          <img src="media-image2.JPG" alt="Facilities" class="responsive-image">
+          <p class="media-caption">Facilities</p>
+        </div>
+        <div class="media-item">
+          <img src="media-image3.JPG" alt="Music" class="responsive-image">
+          <p class="media-caption">Music</p>
+        </div>
+        <div class="media-item">
+          <img src="media-image4.JPG" alt="Entrepreneurship Centre" class="responsive-image">
+          <p class="media-caption">Entrepreneurship Centre</p>
+        </div>
       </div>
     </section>
 
