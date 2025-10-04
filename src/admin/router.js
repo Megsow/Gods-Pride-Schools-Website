@@ -1,9 +1,9 @@
-export function createRouter({ onRouteChange }) {
+export function createRouter({ onRouteChange, defaultRoute = "copy" }) {
   let currentRoute = getCurrentRoute();
 
   function getCurrentRoute() {
     const hash = window.location.hash.slice(1);
-    return hash || "copy";
+    return hash || defaultRoute;
   }
 
   function notify() {

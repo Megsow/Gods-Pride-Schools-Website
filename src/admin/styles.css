@@ -72,6 +72,11 @@ body {
   gap: 2rem;
 }
 
+.section-stack {
+  display: grid;
+  gap: 2rem;
+}
+
 .section-card {
   background: #ffffff;
   border-radius: 16px;

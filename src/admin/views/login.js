@@ -1,4 +1,4 @@
-import { signInWithEmail, signInWithGoogle } from "../../firebase/config.js";
+import { signInWithEmail } from "../../firebase/config.js";
 
 export function renderLoginView(root, { onSuccess, credentials } = {}) {
   root.innerHTML = "";
@@ -37,17 +37,12 @@ export function renderLoginView(root, { onSuccess, credentials } = {}) {
   submitButton.className = "primary-btn";
   submitButton.textContent = "Sign in";
 
-  const googleButton = document.createElement("button");
-  googleButton.type = "button";
-  googleButton.className = "secondary-btn";
-  googleButton.textContent = "Sign in with Google";
-
   const status = document.createElement("div");
   status.className = "helper-text";
 
   form.append(emailField.field, passwordField.field, submitButton);
 
-  card.append(title, description, form, googleButton, status);
+  card.append(title, description, form, status);
   root.append(card);
 
   if (credentials) {
@@ -96,24 +91,6 @@ export function renderLoginView(root, { onSuccess, credentials } = {}) {
     } finally {
       isSubmitting = false;
       setLoading(false);
-    }
-  });
-
-  googleButton.addEventListener("click", async () => {
-    if (isSubmitting) return;
-    clearStatus();
-    isSubmitting = true;
-    setLoading(true, googleButton);
-    try {
-      await signInWithGoogle();
-      setStatus("Signed in successfully.");
-      onSuccess?.();
-    } catch (error) {
-      console.error(error);
-      setStatus(parseFirebaseError(error), true);
-    } finally {
-      isSubmitting = false;
-      setLoading(false, googleButton);
     }
   });
 
