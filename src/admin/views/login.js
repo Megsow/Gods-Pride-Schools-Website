@@ -1,6 +1,6 @@
 import { signInWithEmail, signInWithGoogle } from "../../firebase/config.js";
 
-export function renderLoginView(root, { onSuccess }) {
+export function renderLoginView(root, { onSuccess, credentials } = {}) {
   root.innerHTML = "";
 
   const card = document.createElement("section");
@@ -21,7 +21,7 @@ export function renderLoginView(root, { onSuccess }) {
     label: "Email",
     type: "email",
     id: "admin-email",
-    placeholder: "admin@example.com",
+    placeholder: "name@example.com",
     autocomplete: "email"
   });
 
@@ -50,6 +50,10 @@ export function renderLoginView(root, { onSuccess }) {
 
   card.append(title, description, form, googleButton, status);
   root.append(card);
+
+  if (credentials) {
+    prefillCredentials(credentials);
+  }
 
   let isSubmitting = false;
 
@@ -138,6 +142,15 @@ export function renderLoginView(root, { onSuccess }) {
     } else if (button.dataset.originalText) {
       button.textContent = button.dataset.originalText;
       delete button.dataset.originalText;
+    }
+  }
+
+  function prefillCredentials({ email, password } = {}) {
+    if (typeof email === "string") {
+      emailField.input.value = email;
+    }
+    if (typeof password === "string") {
+      passwordField.input.value = password;
     }
   }
 }
